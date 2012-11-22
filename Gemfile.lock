@@ -1,0 +1,20 @@
+PATH
+  remote: .
+  specs:
+    trans-api (0.0.1)
+      json
+      nokogiri
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    json (1.7.5)
+    nokogiri (1.5.5)
+    test-unit (2.5.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  test-unit
+  trans-api!

@@ -1,5 +1,7 @@
 *.rbc
 *.sassc
+*.swp
+*.DS_Store
 .sass-cache
 capybara-*.html
 .rspec
