@@ -87,7 +87,7 @@ module Trans
 
 
       def torrent_get(fields = [:id, :name, :status], ids = [])
-#        puts "-------------torrent-get request!!!! #{fields}"
+        #        puts "-------------torrent-get request!!!! #{fields}"
         arguments = { fields: fields }
         arguments[:ids] = ids unless ids.empty?
         data = METHODS[:torrent_get]
@@ -99,7 +99,7 @@ module Trans
       end
 
       def torrent_set(arguments={}, ids = [])
-#        puts "-------------torrent-set request!!!! #{arguments}"
+        #        puts "-------------torrent-set request!!!! #{arguments}"
         arguments[:ids] = ids unless ids.empty?
         data = METHODS[:torrent_set]
         data[:arguments] = argument_name_to_api arguments
@@ -121,8 +121,8 @@ module Trans
       end
 
       def torrent_start_now(ids = [])
-				raise "Not Implemented!!!"
-			end
+        raise "Not Implemented!!!"
+      end
 
       def torrent_stop(ids = [])
         arguments = {}
@@ -136,7 +136,7 @@ module Trans
       end
 
       def torrent_add(arguments={})
-#        puts "-------------torrent-add request!!!! #{arguments}"
+        #        puts "-------------torrent-add request!!!! #{arguments}"
         data = METHODS[:torrent_add]
         data[:arguments] = argument_name_to_api arguments
         ret = self.do(:post, data)
@@ -146,7 +146,7 @@ module Trans
       end
 
       def torrent_remove(arguments={}, ids=[])
-#        puts "-------------torrent-remove request!!!! #{arguments}"
+        #        puts "-------------torrent-remove request!!!! #{arguments}"
         arguments[:ids] = ids unless ids.empty?
         data = METHODS[:torrent_remove]
         data[:arguments] = argument_name_to_api arguments
@@ -156,8 +156,8 @@ module Trans
         torrents[:arguments]
       end
 
-			def torrent_verify(ids = [])
-				arguments = {}
+      def torrent_verify(ids = [])
+        arguments = {}
         arguments[:ids] = ids unless ids.empty?
         data = METHODS[:torrent_verify]
         data[:arguments] = argument_name_to_api arguments
@@ -165,10 +165,10 @@ module Trans
         torrents = JSON.parse ret[:response].body, {symbolize_names: true}
         raise torrents[:result] unless valid? torrents, data[:tag]
         torrents[:arguments]
-			end
+      end
 
-			def torrent_reannounce(ids=[])
-				arguments = {}
+      def torrent_reannounce(ids=[])
+        arguments = {}
         arguments[:ids] = ids unless ids.empty?
         data = METHODS[:torrent_reannounce]
         data[:arguments] = argument_name_to_api arguments
@@ -176,9 +176,9 @@ module Trans
         torrents = JSON.parse ret[:response].body, {symbolize_names: true}
         raise torrents[:result] unless valid? torrents, data[:tag]
         torrents[:arguments]
-			end
+      end
 
-			def torrent_set_location(arguments={}, ids=[])
+      def torrent_set_location(arguments={}, ids=[])
         arguments[:ids] = ids unless ids.empty?
         data = METHODS[:torrent_set_location]
         data[:arguments] = argument_name_to_api arguments
@@ -188,30 +188,29 @@ module Trans
         torrents[:arguments]
       end
 
-			def queue_move_top
-				raise "Not Implemented!!!"
-			end
+      def queue_move_top
+        raise "Not Implemented!!!"
+      end
 
-			def queue_move_up
-				raise "Not Implemented!!!"
-			end
+      def queue_move_up
+        raise "Not Implemented!!!"
+      end
 
-			def queue_move_down
-				raise "Not Implemented!!!"
-			end
+      def queue_move_down
+        raise "Not Implemented!!!"
+      end
 
-			def queue_move_bottom
-				raise "Not Implemented!!!"
-			end
+      def queue_move_bottom
+        raise "Not Implemented!!!"
+      end
 
-			def blocklist_update
-				raise "Not Implemented!!!"
-			end
+      def blocklist_update
+        raise "Not Implemented!!!"
+      end
 
-			def port_test
-				raise "Not Implemented!!!"
-			end
-
+      def port_test
+        raise "Not Implemented!!!"
+      end
 
 
 

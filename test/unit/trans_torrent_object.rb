@@ -15,25 +15,25 @@ class TransTorrentObject < Test::Unit::TestCase
 
   CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
 
-	def setup
+  def setup
     Trans::Api::Client.config = CONFIG
 
-		# add a testing torrent
-		file = File.expand_path(File.dirname(__FILE__) + "/torrents/1.torrent")
-		@torrent = Trans::Api::Torrent.add_file file, paused: true
-		sleep 1
-	end
+    # add a testing torrent
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/1.torrent")
+    @torrent = Trans::Api::Torrent.add_file file, paused: true
+    sleep 1
+  end
 
-	def teardown
+  def teardown
     Trans::Api::Client.config = CONFIG
 
-		# remove the testing torrent
-		id = @torrent.id
-		@torrent.delete! delete_local_data: true
-		self.signal_wait_until(lambda{|t| t.nil?}) do
-			Trans::Api::Torrent.find id
-		end
-	end
+    # remove the testing torrent
+    id = @torrent.id
+    @torrent.delete! delete_local_data: true
+    self.signal_wait_until(lambda{|t| t.nil?}) do
+      Trans::Api::Torrent.find id
+    end
+  end
 
 
   def test_torrent_list_inspect_methods
@@ -82,7 +82,7 @@ class TransTorrentObject < Test::Unit::TestCase
         assert torrent.maxConnectedPeers.class == Fixnum
         assert torrent.metadataPercentComplete.class == Fixnum
         assert torrent.name.class == String
-  #      puts torrent.peer_limit.class #?? returns nilclass BROKEN!!
+        #      puts torrent.peer_limit.class #?? returns nilclass BROKEN!!
         assert torrent.peers.class == Array
         assert torrent.peersConnected.class == Fixnum
         assert torrent.peersFrom.class == Hash
@@ -96,7 +96,7 @@ class TransTorrentObject < Test::Unit::TestCase
         assert torrent.queuePosition.class == Fixnum
         assert torrent.rateDownload.class == Fixnum
         assert torrent.rateUpload.class == Fixnum
-#        assert torrent.recheckProgress.class == Fixnum
+        #        assert torrent.recheckProgress.class == Fixnum
         assert torrent.secondsDownloading.class == Fixnum
         assert torrent.secondsSeeding.class == Fixnum
         assert torrent.seedIdleLimit.class == Fixnum
@@ -113,7 +113,7 @@ class TransTorrentObject < Test::Unit::TestCase
         assert torrent.uploadedEver.class == Fixnum
         assert torrent.uploadLimit.class == Fixnum
         assert torrent.uploadLimited.kind_of? Object
-#        assert torrent.uploadRatio.class == Float broken!!!
+        #        assert torrent.uploadRatio.class == Float broken!!!
         assert torrent.wanted.class == Array
         assert torrent.webseeds.class == Array
         assert torrent.webseedsSendingToUs.class == Fixnum
@@ -166,7 +166,7 @@ class TransTorrentObject < Test::Unit::TestCase
     Trans::Api::Client.config = CONFIG
     Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
-		torrent_ref = Trans::Api::Torrent.all.first
+    torrent_ref = Trans::Api::Torrent.all.first
 
     torrent = Trans::Api::Torrent.find torrent_ref.id
     assert !torrent.nil?, "no torrent with id #{torrent_ref.id}"
@@ -177,7 +177,7 @@ class TransTorrentObject < Test::Unit::TestCase
     Trans::Api::Client.config = CONFIG
     Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
-		torrent_ref = Trans::Api::Torrent.all.first
+    torrent_ref = Trans::Api::Torrent.all.first
 
     torrent = Trans::Api::Torrent.find torrent_ref.id
     assert !torrent.nil?, "no torrent with id #{torrent_ref.id}"
@@ -209,17 +209,17 @@ class TransTorrentObject < Test::Unit::TestCase
     torrent = Trans::Api::Torrent.add_file file, paused: true
     assert torrent.id
 
-		# remove the testing torrent
-		id = torrent.id
-		torrent.delete! delete_local_data: true
-		self.signal_wait_until(lambda{|t| t.nil?}) do
-			Trans::Api::Torrent.find id
-		end
+    # remove the testing torrent
+    id = torrent.id
+    torrent.delete! delete_local_data: true
+    self.signal_wait_until(lambda{|t| t.nil?}) do
+      Trans::Api::Torrent.find id
+    end
   end
 
 
   def test_torrent_add_remove_multiple
-		# load global configuration
+    # load global configuration
     Trans::Api::Client.config = CONFIG
     Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
@@ -227,79 +227,79 @@ class TransTorrentObject < Test::Unit::TestCase
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/2.torrent")
     torrent = Trans::Api::Torrent.add_file file, paused: true
 
-		torrents = Trans::Api::Torrent.all
-		ids = torrents.map{|t| t.id}
+    torrents = Trans::Api::Torrent.all
+    ids = torrents.map{|t| t.id}
 
-		assert ids.size > 0, "no loaded torrents found"
+    assert ids.size > 0, "no loaded torrents found"
     torrent = Trans::Api::Torrent.delete_all ids: ids, delete_local_data: true
 
-		#TODO: add assert here!!
+    #TODO: add assert here!!
 
   end
 
 
-	def test_torrent_select_files_for_download
-		# load global configuration
+  def test_torrent_select_files_for_download
+    # load global configuration
     Trans::Api::Client.config = CONFIG
     Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
     torrent = Trans::Api::Torrent.all.first
 
-		# mark files, unwant
-		torrent.files_objects.each do |file|
-			file.unwant
-			assert !file.wanted?
-		end
+    # mark files, unwant
+    torrent.files_objects.each do |file|
+      file.unwant
+      assert !file.wanted?
+    end
 
-		torrent.save!
-		torrent.reset!
+    torrent.save!
+    torrent.reset!
 
-		torrent.files_objects.each do |file|
-			assert !file.wanted?
-		end
+    torrent.files_objects.each do |file|
+      assert !file.wanted?
+    end
 
-	end
+  end
 
-	def test_torrent_verify
-		# load global configuration
+  def test_torrent_verify
+    # load global configuration
     Trans::Api::Client.config = CONFIG
     Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
     torrent = Trans::Api::Torrent.all.first
-		torrent.verify!
-		assert torrent.recheckProgress > 0
-	end
+    torrent.verify!
+    assert torrent.recheckProgress > 0
+  end
 
 
-	def test_torrent_reannounce
-		# load global configuration
+  def test_torrent_reannounce
+    # load global configuration
     Trans::Api::Client.config = CONFIG
     Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
     torrent = Trans::Api::Torrent.all.first
-		torrent.reannounce!
+    torrent.reannounce!
 
-		#TODO: check peers here!
+    #TODO: check peers here!
 
-	end
+  end
 
 
-	def test_torrent_set_location
-		# load global configuration
+  def test_torrent_set_location
+    # load global configuration
     Trans::Api::Client.config = CONFIG
     Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/tmp/download_tmp/")
     torrent = Trans::Api::Torrent.all.first
-		torrent.set_location file, true
+    torrent.set_location file, true
 
-		torrent.reset!
-		assert torrent.downloadDir == file
-	end
+    torrent.reset!
+    assert torrent.downloadDir == file
+  end
 
 
 
-	protected
+  protected
 
 
   # UTILS, probe block as long as pr callback returns false

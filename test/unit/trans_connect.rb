@@ -14,25 +14,25 @@ class TransConnect < Test::Unit::TestCase
 
   CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
 
-	def setup
+  def setup
     Trans::Api::Client.config = CONFIG
 
-		# add a testing torrent
-		file = File.expand_path(File.dirname(__FILE__) + "/torrents/1.torrent")
-		@torrent = Trans::Api::Torrent.add_file file, paused: true
-		sleep 1
-	end
+    # add a testing torrent
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/1.torrent")
+    @torrent = Trans::Api::Torrent.add_file file, paused: true
+    sleep 1
+  end
 
-	def teardown
+  def teardown
     Trans::Api::Client.config = CONFIG
 
-		# remove the testing torrent
-		id = @torrent.id
-		@torrent.delete! delete_local_data: true
-		self.signal_wait_until(lambda{|t| t.nil?}) do
-			Trans::Api::Torrent.find id
-		end
-	end
+    # remove the testing torrent
+    id = @torrent.id
+    @torrent.delete! delete_local_data: true
+    self.signal_wait_until(lambda{|t| t.nil?}) do
+      Trans::Api::Torrent.find id
+    end
+  end
 
 
 
@@ -94,7 +94,7 @@ class TransConnect < Test::Unit::TestCase
     tc = Trans::Api::Connect.new CONFIG
     session_get = tc.session_get
     #NOTE: will shut the daemon down!!
-#    session_close = tc.session_close
+    #    session_close = tc.session_close
   end
 
 
@@ -178,7 +178,7 @@ class TransConnect < Test::Unit::TestCase
           self.signal_wait_until(lambda{|t| Trans::Api::Torrent::STATUS[t.first[:status]] != :stopped}) do
             new_torrent = tc.torrent_get([:id, :name, :status], [torrent[:id]])
           end
-					assert Trans::Api::Torrent::STATUS[new_torrent.first[:status]] != :stopped, "torrent signaled for start (not seeding)"
+          assert Trans::Api::Torrent::STATUS[new_torrent.first[:status]] != :stopped, "torrent signaled for start (not seeding)"
 
           # toggle stop
           tc.torrent_stop([torrent[:id]])
@@ -265,16 +265,16 @@ class TransConnect < Test::Unit::TestCase
   end
 
 
-	def test_torrent_files_unwatched
+  def test_torrent_files_unwatched
     tc = Trans::Api::Connect.new CONFIG
     torrents = tc.torrent_get([:id, :name, :status, :files, :fileStats])
 
-		torrents.each do |torrent|
-#			puts torrent
-			break
-		end
+    torrents.each do |torrent|
+      #			puts torrent
+      break
+    end
 
-	end
+  end
 
 
   def test_torrent_start_now
@@ -283,48 +283,48 @@ class TransConnect < Test::Unit::TestCase
   end
 
   def test_torrent_verify
-		tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new CONFIG
     torrents = tc.torrent_get([:id, :name, :status])
 
-		torrents.each do |torrent|
-			tc.torrent_verify([torrent[:id]])
-			t = tc.torrent_get([:recheckProgress], [torrent[:id]]).first
-			assert t[:recheckProgress] > 0
-		end
+    torrents.each do |torrent|
+      tc.torrent_verify([torrent[:id]])
+      t = tc.torrent_get([:recheckProgress], [torrent[:id]]).first
+      assert t[:recheckProgress] > 0
+    end
 
   end
 
   def test_torrent_reannounce
-		tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new CONFIG
     torrents = tc.torrent_get([:id, :name, :status])
 
-		torrents.each do |torrent|
-			tc.torrent_reannounce([torrent[:id]])
-		end
-		# TODO : check for peers
+    torrents.each do |torrent|
+      tc.torrent_reannounce([torrent[:id]])
+    end
+    # TODO : check for peers
   end
 
 
 
   def test_torrent_set_location
-		tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new CONFIG
 
-		# new target
+    # new target
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/tmp/download_tmp/")
 
-		# load torrent
+    # load torrent
     torrents = tc.torrent_get([:id, :name, :status, :downloadDir])
-		assert torrents.size >0
-		torrents.each do |torrent|
-			tc.torrent_set_location({move: true, location: file} ,[torrent[:id]])
-		end
+    assert torrents.size >0
+    torrents.each do |torrent|
+      tc.torrent_set_location({move: true, location: file} ,[torrent[:id]])
+    end
 
-		# reload torrent
-		torrents = tc.torrent_get([:id, :name, :status, :downloadDir])
-		assert torrents.size >0
-		torrents.each do |torrent|
-			assert torrent[:downloadDir] == file
-		end
+    # reload torrent
+    torrents = tc.torrent_get([:id, :name, :status, :downloadDir])
+    assert torrents.size >0
+    torrents.each do |torrent|
+      assert torrent[:downloadDir] == file
+    end
 
   end
 
@@ -363,7 +363,7 @@ class TransConnect < Test::Unit::TestCase
     #NOTE: busy waiting!!!
     while true do
       torrent = yield
-#      puts torrent
+      #      puts torrent
       break if pr.call torrent
     end
   end

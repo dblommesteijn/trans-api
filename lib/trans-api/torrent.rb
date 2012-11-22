@@ -34,7 +34,7 @@ module Trans
 
       DELETE = [ :ids, :delete_local_data ]
 
-			LOCATION = [ :ids, :move, :location ]
+      LOCATION = [ :ids, :move, :location ]
 
 
       @@default_fields = [ :id, :name, :status ]
@@ -63,8 +63,8 @@ module Trans
       def save!
         # reject unchanged fields
         changed = @fields.reject{|k,v| @old_fields[k] == v}
-				changed.reject!{|k,v| !MUTATOR_FIELDS.include?(k) }
-				changed.reject!{|k,v| v.class == Array && v.empty? }
+        changed.reject!{|k,v| !MUTATOR_FIELDS.include?(k) }
+        changed.reject!{|k,v| v.class == Array && v.empty? }
         if changed.size > 0
           # call api, and store changed fields
           @client.connect.torrent_set changed, [self.id]
@@ -72,20 +72,20 @@ module Trans
         end
       end
 
-			def fields
-				@fields
-			end
+      def fields
+        @fields
+      end
 
-			def files_objects
-				ret = []
-				i = -1
-				torrent = @client.connect.torrent_get([:files, :fileStats], [self.id]).first
-				@fields[:files] = torrent[:files]
-				@fields[:fileStatus] = torrent[:fileStats]
-				self.files.each{ |f| ret << Trans::Api::File.new( torrent: self, fields: @fields,
-																												 file: f.merge(id: (i+=1)).merge(fileStat: torrent[:fileStats][i])) }
-				ret
-			end
+      def files_objects
+        ret = []
+        i = -1
+        torrent = @client.connect.torrent_get([:files, :fileStats], [self.id]).first
+        @fields[:files] = torrent[:files]
+        @fields[:fileStatus] = torrent[:fileStats]
+        self.files.each{ |f| ret << Trans::Api::File.new( torrent: self, fields: @fields,
+                                                         file: f.merge(id: (i+=1)).merge(fileStat: torrent[:fileStats][i])) }
+        ret
+      end
 
       def reset!
         @fields = @client.connect.torrent_get( @fields.map{|k,v| k}, [self.id]).first
@@ -101,17 +101,17 @@ module Trans
         @client.connect.torrent_stop [self.id]
       end
 
-			def verify!
+      def verify!
         @client.connect.torrent_verify [self.id]
-			end
+      end
 
-			def reannounce!
+      def reannounce!
         @client.connect.torrent_reannounce [self.id]
-			end
+      end
 
-			def set_location(file, move = false)
+      def set_location(file, move = false)
         @client.connect.torrent_set_location({location: file, move: move}, [self.id])
-			end
+      end
 
       def delete!(options={})
         options[:delete_local_data] = false unless options.include? :delete_local_data # optional
@@ -144,11 +144,11 @@ module Trans
           Client.new.connect.torrent_stop remap.map{|t| t.id}
         end
 
-				def delete_all(options={})
-					client = Client.new
-					options[:delete_local_data] = false unless options.include? :delete_local_data # optional
-					client.connect.torrent_remove options
-				end
+        def delete_all(options={})
+          client = Client.new
+          options[:delete_local_data] = false unless options.include? :delete_local_data # optional
+          client.connect.torrent_remove options
+        end
 
         def add_file(filename, options={})
           raise "file not found: #{filename}" unless ::File.exists? filename
@@ -199,7 +199,6 @@ module Trans
           end
         end
       end
-
     end
   end
 end
