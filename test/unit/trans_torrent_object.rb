@@ -19,7 +19,7 @@ class TransTorrentObject < Test::Unit::TestCase
     Trans::Api::Client.config = CONFIG
 
     # add a testing torrent
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/1.torrent")
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-1.iso.torrent")
     @torrent = Trans::Api::Torrent.add_file file, paused: true
     sleep 1
   end
@@ -205,7 +205,7 @@ class TransTorrentObject < Test::Unit::TestCase
     Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
     # add file
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/2.torrent")
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
     torrent = Trans::Api::Torrent.add_file file, paused: true
     assert torrent.id
 
@@ -223,8 +223,7 @@ class TransTorrentObject < Test::Unit::TestCase
     Trans::Api::Client.config = CONFIG
     Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
-
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/2.torrent")
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
     torrent = Trans::Api::Torrent.add_file file, paused: true
 
     torrents = Trans::Api::Torrent.all
@@ -291,12 +290,83 @@ class TransTorrentObject < Test::Unit::TestCase
 
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/tmp/download_tmp/")
     torrent = Trans::Api::Torrent.all.first
-    torrent.set_location file, true
+    torrent.set_location! file, true
 
     torrent.reset!
     assert torrent.downloadDir == file
   end
 
+
+  def test_queue_movement
+    # load global configuration
+    Trans::Api::Client.config = CONFIG
+    Trans::Api::Torrent.default_fields = [ :id, :status, :name, :queuePosition ]
+
+    # add test torrents
+    torrents = []
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
+    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-3.iso.torrent")
+    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-4.iso.torrent")
+    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
+    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-6.iso.torrent")
+    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-7.iso.torrent")
+    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+
+    # collect first and last
+    all = Trans::Api::Torrent.all
+    torrent_first = all.first
+    torrent_last = all.last
+
+    # move to bottom
+    torrent_first.queue_bottom!
+    torrent_first.reset!
+    assert torrent_first.queuePosition == all.size - 1
+
+    # move to top
+    torrent_last.queue_top!
+    torrent_last.reset!
+    assert torrent_last.queuePosition == 0
+
+    ref = Trans::Api::Torrent.find_by_field_value :queuePosition, 0
+    assert ref.class == Trans::Api::Torrent
+
+
+    # move down the queue list
+    all = Trans::Api::Torrent.all
+    i = 0
+    while i < all.size
+      all = Trans::Api::Torrent.all
+      all.each do |t|
+        if t.queuePosition == i
+          assert ref.name == t.name
+          t.queue_down!
+        end
+      end
+      i += 1
+    end
+
+    # move up the queue list
+    while i >= 0
+      all = Trans::Api::Torrent.all
+      all.each do |t|
+        if t.queuePosition == i
+          assert ref.name == t.name
+          t.queue_up!
+        end
+      end
+      i -= 1
+    end
+
+    sleep(1) # don't crash the rpc daemon!
+    # cleanup
+    Trans::Api::Torrent.delete_all torrents, delete_local_data: true
+
+  end
 
 
   protected

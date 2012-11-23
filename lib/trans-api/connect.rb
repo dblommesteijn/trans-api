@@ -18,12 +18,19 @@ module Trans
         torrent_get: {method: "torrent-get", tag: 4},
         torrent_set: {method: "torrent-set", tag: 5},
         torrent_start: {method: "torrent-start", tag: 6},
-        torrent_stop: {method: "torrent-stop", tag: 7},
-        torrent_add: {method: "torrent-add", tag: 8},
-        torrent_remove: {method: "torrent-remove", tag: 9},
-        torrent_verify: {method: "torrent-verify", tag: 10},
-        torrent_reannounce: {method: "torrent-reannounce", tag: 11},
-        torrent_set_location: {method: "torrent-set-location", tag: 12}
+        torrent_start_now: {method: "torrent-start-now", tag: 7},
+        torrent_stop: {method: "torrent-stop", tag: 8},
+        torrent_add: {method: "torrent-add", tag: 9},
+        torrent_remove: {method: "torrent-remove", tag: 10},
+        torrent_verify: {method: "torrent-verify", tag: 11},
+        torrent_reannounce: {method: "torrent-reannounce", tag: 12},
+        torrent_set_location: {method: "torrent-set-location", tag: 13},
+        blocklist_update: {method: "blocklist-update", tag: 14},
+        port_test: {method: "port-test", tag: 15},
+        queue_move_top: {method: "queue-move-top", tag: 16},
+        queue_move_up: {method: "queue-move-up", tag: 17},
+        queue_move_down: {method: "queue-move-down", tag: 18},
+        queue_move_bottom: {method: "queue-move-bottom", tag: 19}
       }
 
 
@@ -37,6 +44,7 @@ module Trans
         self.reset_conn
       end
 
+
       def reset_conn
         @conn[:headers] = {}
         # authentication
@@ -49,6 +57,8 @@ module Trans
 
 
       # handles
+
+      #TODO: need to refactor these redundant functions!!
 
       def session_get
         data = METHODS[:session_get]
@@ -76,7 +86,6 @@ module Trans
         session[:arguments]
       end
 
-
       def session_close
         data = METHODS[:session_close]
         ret = self.do :post, data
@@ -85,9 +94,7 @@ module Trans
         session[:arguments]
       end
 
-
       def torrent_get(fields = [:id, :name, :status], ids = [])
-        #        puts "-------------torrent-get request!!!! #{fields}"
         arguments = { fields: fields }
         arguments[:ids] = ids unless ids.empty?
         data = METHODS[:torrent_get]
@@ -99,7 +106,6 @@ module Trans
       end
 
       def torrent_set(arguments={}, ids = [])
-        #        puts "-------------torrent-set request!!!! #{arguments}"
         arguments[:ids] = ids unless ids.empty?
         data = METHODS[:torrent_set]
         data[:arguments] = argument_name_to_api arguments
@@ -121,7 +127,14 @@ module Trans
       end
 
       def torrent_start_now(ids = [])
-        raise "Not Implemented!!!"
+        arguments = {}
+        arguments[:ids] = ids unless ids.empty?
+        data = METHODS[:torrent_start_now]
+        data[:arguments] = argument_name_to_api arguments
+        ret = self.do(:post, data)
+        torrents = JSON.parse ret[:response].body, {symbolize_names: true}
+        raise torrents[:result] unless valid? torrents, data[:tag]
+        torrents[:arguments][:torrents]
       end
 
       def torrent_stop(ids = [])
@@ -136,7 +149,6 @@ module Trans
       end
 
       def torrent_add(arguments={})
-        #        puts "-------------torrent-add request!!!! #{arguments}"
         data = METHODS[:torrent_add]
         data[:arguments] = argument_name_to_api arguments
         ret = self.do(:post, data)
@@ -146,7 +158,6 @@ module Trans
       end
 
       def torrent_remove(arguments={}, ids=[])
-        #        puts "-------------torrent-remove request!!!! #{arguments}"
         arguments[:ids] = ids unless ids.empty?
         data = METHODS[:torrent_remove]
         data[:arguments] = argument_name_to_api arguments
@@ -188,29 +199,67 @@ module Trans
         torrents[:arguments]
       end
 
-      def queue_move_top
-        raise "Not Implemented!!!"
-      end
-
-      def queue_move_up
-        raise "Not Implemented!!!"
-      end
-
-      def queue_move_down
-        raise "Not Implemented!!!"
-      end
-
-      def queue_move_bottom
-        raise "Not Implemented!!!"
-      end
-
       def blocklist_update
-        raise "Not Implemented!!!"
+        data = METHODS[:blocklist_update]
+        ret = self.do(:post, data)
+        torrents = JSON.parse ret[:response].body.gsub("-","_"), {symbolize_names: true}
+        raise torrents[:result] unless valid? torrents, data[:tag]
+        torrents[:arguments]
       end
 
       def port_test
-        raise "Not Implemented!!!"
+        data = METHODS[:port_test]
+        ret = self.do(:post, data)
+        torrents = JSON.parse ret[:response].body.gsub("-","_"), {symbolize_names: true}
+        raise torrents[:result] unless valid? torrents, data[:tag]
+        torrents[:arguments]
       end
+
+
+      def queue_move_top(ids=[])
+        arguments = {}
+        arguments[:ids] = ids unless ids.empty?
+        data = METHODS[:queue_move_top]
+        data[:arguments] = argument_name_to_api arguments
+        ret = self.do(:post, data)
+        torrents = JSON.parse ret[:response].body.gsub("-","_"), {symbolize_names: true}
+        raise torrents[:result] unless valid? torrents, data[:tag]
+        torrents[:arguments]
+      end
+
+      def queue_move_up(ids=[])
+        arguments = {}
+        arguments[:ids] = ids unless ids.empty?
+        data = METHODS[:queue_move_up]
+        data[:arguments] = argument_name_to_api arguments
+        ret = self.do(:post, data)
+        torrents = JSON.parse ret[:response].body.gsub("-","_"), {symbolize_names: true}
+        raise torrents[:result] unless valid? torrents, data[:tag]
+        torrents[:arguments]
+      end
+
+      def queue_move_down(ids=[])
+        arguments = {}
+        arguments[:ids] = ids unless ids.empty?
+        data = METHODS[:queue_move_down]
+        data[:arguments] = argument_name_to_api arguments
+        ret = self.do(:post, data)
+        torrents = JSON.parse ret[:response].body.gsub("-","_"), {symbolize_names: true}
+        raise torrents[:result] unless valid? torrents, data[:tag]
+        torrents[:arguments]
+      end
+
+      def queue_move_bottom(ids=[])
+        arguments = {}
+        arguments[:ids] = ids unless ids.empty?
+        data = METHODS[:queue_move_bottom]
+        data[:arguments] = argument_name_to_api arguments
+        ret = self.do(:post, data)
+        torrents = JSON.parse ret[:response].body.gsub("-","_"), {symbolize_names: true}
+        raise torrents[:result] unless valid? torrents, data[:tag]
+        torrents[:arguments]
+      end
+
 
 
 

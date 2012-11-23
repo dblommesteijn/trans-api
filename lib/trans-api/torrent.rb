@@ -1,7 +1,6 @@
 module Trans
   module Api
 
-
     #
     # Torrent class
     #
@@ -83,7 +82,7 @@ module Trans
         @fields[:files] = torrent[:files]
         @fields[:fileStatus] = torrent[:fileStats]
         self.files.each{ |f| ret << Trans::Api::File.new( torrent: self, fields: @fields,
-                                                         file: f.merge(id: (i+=1)).merge(fileStat: torrent[:fileStats][i])) }
+          file: f.merge(id: (i+=1)).merge(fileStat: torrent[:fileStats][i])) }
         ret
       end
 
@@ -109,13 +108,29 @@ module Trans
         @client.connect.torrent_reannounce [self.id]
       end
 
-      def set_location(file, move = false)
+      def set_location!(file, move = false)
         @client.connect.torrent_set_location({location: file, move: move}, [self.id])
       end
 
       def delete!(options={})
         options[:delete_local_data] = false unless options.include? :delete_local_data # optional
         @client.connect.torrent_remove options, [self.id]
+      end
+
+      def queue_top!
+        @client.connect.queue_move_top [self.id]
+      end
+
+      def queue_bottom!
+        @client.connect.queue_move_bottom [self.id]
+      end
+
+      def queue_up!
+        @client.connect.queue_move_up [self.id]
+      end
+
+      def queue_down!
+        @client.connect.queue_move_down [self.id]
       end
 
       class << self
@@ -126,6 +141,16 @@ module Trans
 
         def find(id)
           torrents = Client.new.connect.torrent_get( @@default_fields , [id])
+          remap = torrents.map{|t| Torrent.new torrent: t }
+          return remap.first if torrents.size == 1
+          return nil if torrents.empty?
+          remap
+        end
+
+        def find_by_field_value(field, value)
+          fields = [field, :id, :name, :status]
+          torrents = Client.new.connect.torrent_get( fields )
+          torrents.reject!{|t| t[field] != value}
           remap = torrents.map{|t| Torrent.new torrent: t }
           return remap.first if torrents.size == 1
           return nil if torrents.empty?
@@ -144,7 +169,10 @@ module Trans
           Client.new.connect.torrent_stop remap.map{|t| t.id}
         end
 
-        def delete_all(options={})
+        def delete_all(torrents, options={})
+          raise "no ids assigned" if torrents.empty? || !torrents.kind_of?(Array)
+          raise "expected type: Torrent" if torrents.size > 0 && !torrents.first.kind_of?(Torrent)
+          ids = torrents.map{|torrent| torrent.id}
           client = Client.new
           options[:delete_local_data] = false unless options.include? :delete_local_data # optional
           client.connect.torrent_remove options
