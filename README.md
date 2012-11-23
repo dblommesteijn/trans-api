@@ -30,7 +30,7 @@ This gem is build and tested with:
 
 ### Known Issues
 
-The Transmission RPC call 'torrent-remove' (implemented as torrent.delete! and Torrent::delete\_all!) will crash the daemon! This is not a known issue at
+The Transmission RPC call 'torrent-remove' (implemented as torrent.delete! and Torrent::delete_all!) will crash the daemon! This is not a known issue at
 
 
 ## Installation
@@ -53,13 +53,13 @@ Or install it yourself as:
 Define a configuration for your connection (initialize script)
 
 ```ruby
-  CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
+CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
 ```
 
 Setup default configuration (initialize script)
 
 ```ruby
-  Trans::Api::Client.config = CONFIG
+Trans::Api::Client.config = CONFIG
 ```
 
 Define default torrent fields (bulk requests)
@@ -68,20 +68,18 @@ On requesting an additional info field from the torrent object, a new call is ma
 withing the object).
 
 ```ruby
-  Trans::Api::Torrent.default\_fields = [ :id, :status, :name ]
+Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 ```
 
 Example
 
 ```ruby
-	Trans::Api::Torrent.default\_fields = [ :id, :status, :name ]
-
-	# loads the torrent object of id 1 with fields: :id, :status, :name
-	id = 1
-	torrent = Trans::Api::Torrent.find id
-
-	# calls the rpc to receive files from the defined torrent
-	torrent.files
+Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
+# loads the torrent object of id 1 with fields: :id, :status, :name
+id = 1
+torrent = Trans::Api::Torrent.find id
+# calls the rpc to receive files from the defined torrent
+torrent.files
 ```
 
 ## Usage
@@ -92,8 +90,8 @@ Trans api can be used in two ways:
 1. Connect (raw class)
 
 ```ruby
-  tc = Trans::Api::Connect.new CONFIG
-  torrents = tc.torrent\_get([:id, :name, :status])
+tc = Trans::Api::Connect.new CONFIG
+torrents = tc.torrent_get([:id, :name, :status])
 ```
 
 2. Mapped objects (torrent, file, session classes)
@@ -106,15 +104,15 @@ Trans api can be used in two ways:
 Get all registered torrents
 
 ```ruby
-	Trans::Api::Torrent.all
+Trans::Api::Torrent.all
 ```
 
 Get a specific torrent by transmission id
 NOTE: transmission assigns random ids to torrents on daemon start
 
 ```ruby
-	id = 1
-	Trans::Api::Torrent.find id
+id = 1
+Trans::Api::Torrent.find id
 ```
 
 ### Torrent static calls
@@ -122,26 +120,26 @@ NOTE: transmission assigns random ids to torrents on daemon start
 Start all
 
 ```ruby
-	Trans::Api::Torrent.start\_all
+Trans::Api::Torrent.start_all
 ```
 
 Stop all
 
 ```ruby
-	Trans::Api::Torrent.stop\_all
+Trans::Api::Torrent.stop_all
 ```
 
 Delete all (tranmission daemon will crash on rapid call)
 
 ```ruby
-	Trans::Api::Torrent.delete\_all
+Trans::Api::Torrent.delete_all
 ```
 
 Add torrent file
 
 ```ruby
-	options = {paused: true}
-	Trans::Api::Torrent.add\_file filename, options
+options = {paused: true}
+Trans::Api::Torrent.add_file filename, options
 ```
 
 ### Torrent instance actions
@@ -149,63 +147,63 @@ Add torrent file
 Get a torrent object
 
 ```ruby
-	id = 1
-	torrent = Trans::Api::Torrent.find id
+id = 1
+torrent = Trans::Api::Torrent.find id
 ```
 
 Save (store changed values)
 
 ```ruby
-	torrent.save!
+torrent.save!
 ```
 
 Start
 
 ```ruby
-	torrent.start!
+torrent.start!
 ```
 
 Reset
 
 ```ruby
-	torrent.reset!
+torrent.reset!
 ```
 
 Stop
 
 ```ruby
-	torrent.stop!
+torrent.stop!
 ```
 
 File Objects (returns a list of Trans::Api::File objects)
 
 ```ruby
-	torrent.files\_objects
+torrent.files_objects
 ```
 
 Status names (get the status name of the torrent)
 
 ```ruby
-	torrent.status\_name
+torrent.status_name
 ```
 
 Verify (recheck downloaded files)
 
 ```ruby
-	torrent.verify!
+torrent.verify!
 ```
 
 Reannounce
 
 ```ruby
-	torrent.reannounce!
+torrent.reannounce!
 ```
 
 Delete all (tranmission daemon will crash on rapid call)
 
 ```ruby
-	options = {delete\_local\_data: true}
-	torrent.delete! options
+options = {delete_local_data: true}
+torrent.delete! options
 ```
 
 NOTE: defined torrent accessor fields are defined as instance methods to the Torrent object
@@ -216,13 +214,13 @@ NOTE: defined torrent accessor fields are defined as instance methods to the Tor
 Get session object
 
 ```ruby
-	session = Trans::Api::Session.new
+session = Trans::Api::Session.new
 ```
 
 Get available fields (returns symbols of get/set fields)
 
 ```ruby
-	session.fields
+session.fields
 ```
 
 NOTE: defined session fields are defined as instance methods to the Session object
@@ -233,42 +231,42 @@ NOTE: defined session fields are defined as instance methods to the Session obje
 Getting files from a torrent (file cannot be used standalone, it's an helper class)
 
 ```ruby
-	id = 1
-	torrent = Trans::Api::Torrent.find id
-	files = torrent.files\_objects
-	files.each do |file|
-		# manipulate file here!
-	end
+id = 1
+torrent = Trans::Api::Torrent.find id
+files = torrent.files_objects
+files.each do |file|
+	# manipulate file here!
+end
 ```
 
 File name
 
 ```ruby
-	file.name
+file.name
 ```
 
 File mark unwant (mark for ignore, not download)
 
 ```ruby
-	file.unwant
+file.unwant
 ```
 
 File mark want (mark for download)
 
 ```ruby
-	file.want
+file.want
 ```
 
 File wanted? (marked for download)
 
 ```ruby
-	file.wanted?
+file.wanted?
 ```
 
 File stats
 
 ```ruby
-	file.stat
+file.stat
 ```
 
 NOTE: changed preferences (want, unwant) set options on the linked Torrent object, after saving torrent (torrent.save!) file mutations are stored.
