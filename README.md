@@ -151,7 +151,7 @@ Trans::Api::Torrent.stop_all
 Delete all (tranmission daemon will crash on rapid call)
 
 ```ruby
-torrents = Trans:Api:Torrent.all
+torrents = Trans::Api::Torrent.all
 # assign explicit torrent objects for removal
 Trans::Api::Torrent.delete_all torrents
 ```
@@ -251,10 +251,10 @@ Waitfor (automatic delayed responce after/before chained method is called)
 ```ruby
 # waitfor status name not equals stopped after calling start!
 optional = :after
-torrent.waitfor_after( lambda{|t| t.status_name != :stopped}, optional ).start!
+torrent.waitfor( lambda{|t| t.status_name != :stopped}, optional ).start!
 # waitfor status name equals stopped after calling stop!
-torrent.waitfor_after( lambda{|t| t.status_name == :stopped}, optional ).stop!
-# NOTE: waitfor_after can be used for blocking without a chained method
+torrent.waitfor( lambda{|t| t.status_name == :stopped}, optional ).stop!
+# NOTE: waitfor can be used for blocking without a chained method (optional = :before only)
 ```
 
 NOTE: defined torrent accessor fields are defined as instance methods to the Torrent object

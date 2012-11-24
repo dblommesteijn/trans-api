@@ -258,12 +258,12 @@ module Trans
         @task = task # lambda
         @target_object = target_object
         @place = place
+
+        self.wait if @place == :before
       end
 
       # handling Torrent method calls
       def method_missing(method, *args)
-
-        self.wait if @place == :before
 
         unless args.empty?
           @target_object.send method, args
@@ -274,7 +274,6 @@ module Trans
         self.wait if @place == :after
 
       end
-
 
       def wait
         # keep trying task (and refreshing the torrent file)
