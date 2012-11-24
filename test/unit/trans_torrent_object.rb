@@ -17,6 +17,7 @@ class TransTorrentObject < Test::Unit::TestCase
 
   def setup
     Trans::Api::Client.config = CONFIG
+    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
     # add a testing torrent
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-1.iso.torrent")
@@ -25,8 +26,6 @@ class TransTorrentObject < Test::Unit::TestCase
   end
 
   def teardown
-    Trans::Api::Client.config = CONFIG
-
     # remove the testing torrent
     id = @torrent.id
     @torrent.delete! delete_local_data: true
@@ -37,10 +36,6 @@ class TransTorrentObject < Test::Unit::TestCase
 
 
   def test_torrent_list_inspect_methods
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
-
     # session object
     torrents = Trans::Api::Torrent.all
 
@@ -126,10 +121,6 @@ class TransTorrentObject < Test::Unit::TestCase
   end
 
   def test_torrent_get_set_methods
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
-
     # get all available objects
     torrents = Trans::Api::Torrent.all
 
@@ -162,10 +153,6 @@ class TransTorrentObject < Test::Unit::TestCase
 
 
   def test_torrent_get_single
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
-
     torrent_ref = Trans::Api::Torrent.all.first
 
     torrent = Trans::Api::Torrent.find torrent_ref.id
@@ -173,10 +160,6 @@ class TransTorrentObject < Test::Unit::TestCase
   end
 
   def test_torrent_start_stop_single
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
-
     torrent_ref = Trans::Api::Torrent.all.first
 
     torrent = Trans::Api::Torrent.find torrent_ref.id
@@ -190,20 +173,12 @@ class TransTorrentObject < Test::Unit::TestCase
 
 
   def test_torrent_start_stop_multiple
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
-
     #TODO: wait until status indicates start!
     torrents = Trans::Api::Torrent.start_all
     torrents = Trans::Api::Torrent.stop_all
   end
 
   def test_torrent_add_remove_single
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
-
     # add file
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
     torrent = Trans::Api::Torrent.add_file file, paused: true
@@ -219,18 +194,13 @@ class TransTorrentObject < Test::Unit::TestCase
 
 
   def test_torrent_add_remove_multiple
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
-
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
     torrent = Trans::Api::Torrent.add_file file, paused: true
 
     torrents = Trans::Api::Torrent.all
-    ids = torrents.map{|t| t.id}
 
-    assert ids.size > 0, "no loaded torrents found"
-    torrent = Trans::Api::Torrent.delete_all ids: ids, delete_local_data: true
+    assert torrents.size > 0, "no loaded torrents found"
+    torrent = Trans::Api::Torrent.delete_all torrents, delete_local_data: true
 
     #TODO: add assert here!!
 
@@ -238,10 +208,6 @@ class TransTorrentObject < Test::Unit::TestCase
 
 
   def test_torrent_select_files_for_download
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
-
     torrent = Trans::Api::Torrent.all.first
 
     # mark files, unwant
@@ -260,10 +226,6 @@ class TransTorrentObject < Test::Unit::TestCase
   end
 
   def test_torrent_verify
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
-
     torrent = Trans::Api::Torrent.all.first
     torrent.verify!
     assert torrent.recheckProgress > 0
@@ -271,10 +233,6 @@ class TransTorrentObject < Test::Unit::TestCase
 
 
   def test_torrent_reannounce
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
-
     torrent = Trans::Api::Torrent.all.first
     torrent.reannounce!
 
@@ -284,10 +242,6 @@ class TransTorrentObject < Test::Unit::TestCase
 
 
   def test_torrent_set_location
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
-
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/tmp/download_tmp/")
     torrent = Trans::Api::Torrent.all.first
     torrent.set_location! file, true
@@ -298,8 +252,7 @@ class TransTorrentObject < Test::Unit::TestCase
 
 
   def test_queue_movement
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
+    # get queueposition as well
     Trans::Api::Torrent.default_fields = [ :id, :status, :name, :queuePosition ]
 
     # add test torrents
@@ -368,6 +321,21 @@ class TransTorrentObject < Test::Unit::TestCase
 
   end
 
+  def test_torrent_waitfor_status
+
+    assert @torrent.status_name == :stopped || @torrent.status_name == :checkFiles
+
+    # mark start
+    @torrent.waitfor( lambda{|t| t.status_name != :stopped} ).start!
+    @torrent.reset!
+    assert @torrent.status_name != :stopped
+
+    # mark stop
+    @torrent.waitfor( lambda{|t| t.status_name == :stopped} ).stop!
+    @torrent.reset!
+    assert @torrent.status_name == :stopped
+
+  end
 
   protected
 

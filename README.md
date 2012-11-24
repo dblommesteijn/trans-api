@@ -10,34 +10,48 @@ OSX:
   Transmission > Preferences > Remote (tab) > Enable remote access
 
 
-## Tests
+### Platforms
 
-This gem is build and tested with:
+This gem is (build and) tested with:
 
   OSX Lion, Mountain Lion
-  Ruby 1.9.3,
+
+  Ruby 1.9.3
+
   Rails: 3.2.8, 3.2.9
+
   Transmission 2.73 (13589)
 
 
 ### Roadmap
 
-* (0.0.2)
+* Version (0.0.1)
 
-  Session object include: blocklist, port-test
-  Torrent object include torernt-start-now, queue-move-top/up/down/bottom
+  Current version
+
+* Version (0.0.2)
+
+  Session object include: 'blocklist', 'port-test'
+
+  Torrent object include 'torrent-start-now', 'queue-move-top/up/down/bottom'
+
+  Torrent object 'delete_all!' explicit torrent references
+
+  Torrent object 'waitfor_after' helper to check for lambda after calling it's chained cousin
+
+  Torrent object 'waitfor_before' helper to check for lambda before calling it's chained cousin
 
 
 ### Known Issues
 
-The Transmission RPC call 'torrent-remove' (implemented as torrent.delete! and Torrent::delete_all!) will crash the daemon! This is not a known issue at
+The Transmission RPC call 'torrent-remove' (implemented as torrent.delete! and Torrent::delete_all!) will crash the daemon! This is NOT a known Transmission issue.
 
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'trans-api'
+  gem 'trans-api', git: "git://github.com/dblommesteijn/trans-api.git"
 
 And then execute:
 
@@ -82,6 +96,11 @@ torrent = Trans::Api::Torrent.find id
 torrent.files
 ```
 
+## Examples
+
+  Check the examples/ folder or Unit tests: test/unit/trans_ (session/torrent) _object.rb
+
+
 ## Usage
 
 Trans api can be used in two ways:
@@ -117,13 +136,13 @@ Trans::Api::Torrent.find id
 
 ### Torrent static calls
 
-Start all
+Start all (start all transfers)
 
 ```ruby
 Trans::Api::Torrent.start_all
 ```
 
-Stop all
+Stop all (stop all transfers)
 
 ```ruby
 Trans::Api::Torrent.stop_all
@@ -132,7 +151,9 @@ Trans::Api::Torrent.stop_all
 Delete all (tranmission daemon will crash on rapid call)
 
 ```ruby
-Trans::Api::Torrent.delete_all
+torrents = Trans:Api:Torrent.all
+# assign explicit torrent objects for removal
+Trans::Api::Torrent.delete_all torrents
 ```
 
 Add torrent file
@@ -141,6 +162,17 @@ Add torrent file
 options = {paused: true}
 Trans::Api::Torrent.add_file filename, options
 ```
+
+Get all fields
+```ruby
+Trans::Api::Torrent.ACCESSOR_FIELDS
+```
+
+Get all Mutable fields
+```ruby
+Trans::Api::Torrent.MUTATOR_FIELDS
+```
+
 
 ### Torrent instance actions
 
@@ -157,19 +189,25 @@ Save (store changed values)
 torrent.save!
 ```
 
-Start
+Start (activate torrent for transfer)
 
 ```ruby
 torrent.start!
 ```
 
-Reset
+Start Now (not sure what's the difference to start!, it's a different API call)
+
+```ruby
+torrent.start_now!
+```
+
+Reset (reload all torrent fields, including later requested ones)
 
 ```ruby
 torrent.reset!
 ```
 
-Stop
+Stop (stop torrent transfer)
 
 ```ruby
 torrent.stop!
@@ -193,17 +231,30 @@ Verify (recheck downloaded files)
 torrent.verify!
 ```
 
-Reannounce
+Reannounce Torrent
 
 ```ruby
 torrent.reannounce!
 ```
 
-Delete all (tranmission daemon will crash on rapid call)
+Delete (tranmission daemon will crash on rapid call)
 
 ```ruby
 options = {delete_local_data: true}
 torrent.delete! options
+```
+
+Waitfor (automatic delayed responce after/before chained method is called)
+
+  Blocking busy waiting for lambda to return true
+
+```ruby
+# waitfor status name not equals stopped after calling start!
+optional = :after
+torrent.waitfor_after( lambda{|t| t.status_name != :stopped}, optional ).start!
+# waitfor status name equals stopped after calling stop!
+torrent.waitfor_after( lambda{|t| t.status_name == :stopped}, optional ).stop!
+# NOTE: waitfor_after can be used for blocking without a chained method
 ```
 
 NOTE: defined torrent accessor fields are defined as instance methods to the Torrent object

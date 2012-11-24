@@ -401,7 +401,6 @@ class TransConnect < Test::Unit::TestCase
     ref = nil
     all = tc.torrent_get([:id, :name, :status, :queuePosition])
     all.each do |t|
-      puts t
       if t[:queuePosition] == 0
         ref = t
         break

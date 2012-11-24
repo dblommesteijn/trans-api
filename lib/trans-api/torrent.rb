@@ -45,9 +45,7 @@ module Trans
         @fields = options[:torrent] if options.include? :torrent
         @old_fields = @fields.clone
         @last_error = {error: "", message: ""}
-
         self.attach_methods!
-
       end
 
       # placeholder for fields
@@ -59,10 +57,13 @@ module Trans
         STATUS[self.status]
       end
 
+      # store changed field
       def save!
         # reject unchanged fields
         changed = @fields.reject{|k,v| @old_fields[k] == v}
+        # reject inmutable fields
         changed.reject!{|k,v| !MUTATOR_FIELDS.include?(k) }
+        # reject empty arrays
         changed.reject!{|k,v| v.class == Array && v.empty? }
         if changed.size > 0
           # call api, and store changed fields
@@ -71,10 +72,12 @@ module Trans
         end
       end
 
+      # get registered fields
       def fields
         @fields
       end
 
+      # files wrapped by an File object
       def files_objects
         ret = []
         i = -1
@@ -86,6 +89,7 @@ module Trans
         ret
       end
 
+      # reload current object
       def reset!
         @fields = @client.connect.torrent_get( @fields.map{|k,v| k}, [self.id]).first
         @old_fields = @fields.clone
@@ -94,6 +98,10 @@ module Trans
 
       def start!
         @client.connect.torrent_start [self.id]
+      end
+
+      def start_now!
+        @client.connect.torrent_start_now [self.id]
       end
 
       def stop!
@@ -133,6 +141,13 @@ module Trans
         @client.connect.queue_move_down [self.id]
       end
 
+      # wait for a specific torrent lambda after call
+      # Ex: lamb = instance.waitfor_after(lambda{|torrent| torrent.status_name != :stopped}, :after).start!
+      def waitfor(lamb, place = :after)
+        TorrentDummy.new lamb, self, place
+      end
+
+      # static methods
       class << self
         def all
           torrents = Client.new.connect.torrent_get( @@default_fields )
@@ -148,9 +163,11 @@ module Trans
         end
 
         def find_by_field_value(field, value)
+          # set a reduced search field (with some default values)
           fields = [field, :id, :name, :status]
           torrents = Client.new.connect.torrent_get( fields )
           torrents.reject!{|t| t[field] != value}
+          # TODO: perhaps add original default values??
           remap = torrents.map{|t| Torrent.new torrent: t }
           return remap.first if torrents.size == 1
           return nil if torrents.empty?
@@ -227,6 +244,50 @@ module Trans
           end
         end
       end
+
     end
+
+    protected
+
+    # Dummy class to handle chained calling
+    # Inspired by delayed_job (message_sending.rb)
+    # https://github.com/collectiveidea/delayed_job/blob/master/lib/delayed/message_sending.rb
+    class TorrentDummy
+
+      def initialize(task, target_object, place)
+        @task = task # lambda
+        @target_object = target_object
+        @place = place
+      end
+
+      # handling Torrent method calls
+      def method_missing(method, *args)
+
+        self.wait if @place == :before
+
+        unless args.empty?
+          @target_object.send method, args
+        else
+          @target_object.send method
+        end
+
+        self.wait if @place == :after
+
+      end
+
+
+      def wait
+        # keep trying task (and refreshing the torrent file)
+        while true do
+          @target_object.reset!
+          t = @task.call @target_object
+          break if t # task achieved!
+        end
+      end
+
+    end
+
+
+
   end
 end
