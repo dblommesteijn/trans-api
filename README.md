@@ -25,37 +25,19 @@ This gem is (build and) tested with:
 
 ### Roadmap
 
-<<<<<<< HEAD
-* Version (0.0.1)
-
-  Current version
-=======
 * Version (0.0.1) (current)
 
   Initial project import.
->>>>>>> Maintanance.
 
 * Version (0.0.2)
 
   Session object include: 'blocklist', 'port-test'
 
-<<<<<<< HEAD
-=======
-  Session singleton object
-
->>>>>>> Maintanance.
   Torrent object include 'torrent-start-now', 'queue-move-top/up/down/bottom'
 
   Torrent object 'delete_all!' explicit torrent references
 
-<<<<<<< HEAD
-  Torrent object 'waitfor_after' helper to check for lambda after calling it's chained cousin
-
-  Torrent object 'waitfor_before' helper to check for lambda before calling it's chained cousin
-=======
   Torrent object 'waitfor' helper to check for lambda after/before calling it's chained cousin
-
->>>>>>> Maintanance.
 
 
 ### Known Issues
@@ -67,11 +49,7 @@ The Transmission RPC call 'torrent-remove' (implemented as torrent.delete! and T
 
 Add this line to your application's Gemfile:
 
-<<<<<<< HEAD
-  gem 'trans-api', git: "git://github.com/dblommesteijn/trans-api.git"
-=======
     gem 'trans-api', git: "git://github.com/dblommesteijn/trans-api.git"
->>>>>>> Maintanance.
 
 And then execute:
 
@@ -250,7 +228,6 @@ Verify (recheck downloaded files)
 ```ruby
 torrent.verify!
 ```
-<<<<<<< HEAD
 
 Reannounce Torrent
 
@@ -270,27 +247,6 @@ Waitfor (automatic delayed responce after/before chained method is called)
   Blocking busy waiting for lambda to return true
 
 ```ruby
-=======
-
-Reannounce Torrent
-
-```ruby
-torrent.reannounce!
-```
-
-Delete (tranmission daemon will crash on rapid call)
-
-```ruby
-options = {delete_local_data: true}
-torrent.delete! options
-```
-
-Waitfor (automatic delayed responce after/before chained method is called)
-
-  Blocking busy waiting for lambda to return true
-
-```ruby
->>>>>>> Maintanance.
 # waitfor status name not equals stopped after calling start!
 optional = :after
 torrent.waitfor( lambda{|t| t.status_name != :stopped}, optional ).start!
@@ -307,11 +263,7 @@ NOTE: defined torrent accessor fields are defined as instance methods to the Tor
 Get session object (singleton)
 
 ```ruby
-<<<<<<< HEAD
-session = Trans::Api::Session.new
-=======
 session = Trans::Api::Session.instance
->>>>>>> Maintanance.
 ```
 
 Get available fields (returns symbols of get/set fields)
@@ -319,8 +271,6 @@ Get available fields (returns symbols of get/set fields)
 ```ruby
 session.fields
 ```
-<<<<<<< HEAD
-=======
 
 Get all fields and values
 
@@ -333,7 +283,6 @@ Reset (reload object, request information and not saving changes)
 ```ruby
 session.reset!
 ```
->>>>>>> Maintanance.
 
 NOTE: defined session fields are defined as instance methods to the Session object
 
