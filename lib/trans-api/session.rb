@@ -1,3 +1,6 @@
+require 'singleton'
+
+
 module Trans
   module Api
 
@@ -7,9 +10,14 @@ module Trans
 
     class Session
 
+      include Singleton
+
+      ENCRYPTION = [ :required, :preferred, :tolerated ]
+
+
       def initialize
         @client = Client.new
-        self.refresh_fields!
+        self.reset!
 
         # map fields to accessors
         @fields.each do |k, v|
@@ -54,21 +62,21 @@ module Trans
           # call api, and store changed fields
           @client.connect.session_set changed
           # refresh
-          self.refresh_fields!
+          self.reset!
         end
       end
 
-      def metaclass
-        class << self; self; end
-      end
-
-      protected
-      def refresh_fields!
+      # reload current object
+       def reset!
         @fields = @client.connect.session_get
         @old_fields = @fields.clone
         @last_error = {error: "", message: ""}
       end
 
+
+      def metaclass
+        class << self; self; end
+      end
     end
 
   end

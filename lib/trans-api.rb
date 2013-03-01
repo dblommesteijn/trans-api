@@ -7,8 +7,6 @@ require File.expand_path(File.dirname(__FILE__) + "/trans-api/file")
 
 module Trans
   module Api
-
-
-
+    # placeholder
   end
 end

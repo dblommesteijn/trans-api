@@ -80,12 +80,12 @@ module Trans
       # files wrapped by an File object
       def files_objects
         ret = []
-        i = -1
+#        i = -1
         torrent = @client.connect.torrent_get([:files, :fileStats], [self.id]).first
         @fields[:files] = torrent[:files]
         @fields[:fileStatus] = torrent[:fileStats]
-        self.files.each{ |f| ret << Trans::Api::File.new( torrent: self, fields: @fields,
-          file: f.merge(id: (i+=1)).merge(fileStat: torrent[:fileStats][i])) }
+        self.files.each_with_index{ |f,i| ret << Trans::Api::File.new( torrent: self, fields: @fields,
+          file: f.merge(id: i).merge(fileStat: torrent[:fileStats][i])) }
         ret
       end
 

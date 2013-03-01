@@ -15,12 +15,27 @@ class TransSessionObject < Test::Unit::TestCase
 
   CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
 
-  def test_session_set_peer_limit_global
-    # load global configuration
+  def setup
     Trans::Api::Client.config = CONFIG
+  end
 
+
+  def test_session_singleton
+
+    # load first instance
+    session1 = Trans::Api::Session.instance
+    # load second instance
+    session2 = Trans::Api::Session.instance
+
+    # compare instance objects (should be equal)
+    assert session1 == session2
+
+  end
+
+
+  def test_session_set_peer_limit_global
     # session object
-    session = Trans::Api::Session.new
+    session = Trans::Api::Session.instance
 
     # read value
     oldvalue = session.peer_limit_global
@@ -41,11 +56,8 @@ class TransSessionObject < Test::Unit::TestCase
   end
 
   def test_session_fields
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-
     # session object
-    session = Trans::Api::Session.new
+    session = Trans::Api::Session.instance
 
     assert session.fields_and_values.size > 0, "no fields and values loaded"
     assert session.fields.size > 0, "no fields loaded"
@@ -53,13 +65,17 @@ class TransSessionObject < Test::Unit::TestCase
   end
 
   def test_session_stats
-    # load global configuration
-    Trans::Api::Client.config = CONFIG
-
     # session object
-    session = Trans::Api::Session.new
+    session = Trans::Api::Session.instance
 
     assert session.stats!, "no stats loaded"
+  end
+
+
+  def test_session_secure
+    session = Trans::Api::Session.instance
+
+    #TODO: add security test here!
   end
 
 
