@@ -27,6 +27,9 @@ module Trans
         :ids, :location, :peer_limit, :priority_high, :priority_low, :priority_normal, :queuePosition, :seedIdleLimit,
         :seedIdleMode, :seedRatioLimit, :seedRatioMode, :trackerAdd, :trackerRemove, :trackerReplace, :uploadLimit, :uploadLimited ]
 
+      CONTROL = [:start!, :start_now!, :stop!, :verify!, :reannounce!, :set_location!, :delete!, :queue_top!, :queue_bottom!,
+        :queue_up!, :queue_down!]
+
       # torrent add fields
       ADD = [ :cookies, :download_dir, :filename, :metainfo, :paused, :peer_limit, :bandwidthPriority, :files_wanted,
         :files_unwanted, :priority_high, :priority_low, :priority_normal ]

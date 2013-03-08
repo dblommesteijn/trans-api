@@ -337,6 +337,13 @@ class TransTorrentObject < Test::Unit::TestCase
 
   end
 
+
+  def test_torrent_file_listing
+    puts @torrent.files_objects
+  end
+
+
+
   protected
 
 
