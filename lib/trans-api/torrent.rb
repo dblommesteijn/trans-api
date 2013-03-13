@@ -206,6 +206,14 @@ module Trans
           Torrent.new torrent: torrent
         end
 
+        def add_metainfo(metainfo, options={})
+          options[:metainfo] = metainfo
+          client = Client.new
+          torrent = client.connect.torrent_add options
+          torrent = client.connect.torrent_get( @@default_fields, [torrent[:id]]).first
+          Torrent.new torrent: torrent
+        end
+
         def default_fields=(list=[])
           @@default_fields << :id unless list.include? :id
           @@default_fields |= list

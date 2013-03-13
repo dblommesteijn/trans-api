@@ -13,7 +13,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../lib/trans-api")
 
 class TransTorrentObject < Test::Unit::TestCase
 
-  CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
+  CONFIG = { host: "localhost", port: 8078, user: "pinguin", pass: "100110", path: "/transmission/rpc" }
 
   def setup
     Trans::Api::Client.config = CONFIG
@@ -338,8 +338,19 @@ class TransTorrentObject < Test::Unit::TestCase
   end
 
 
-  def test_torrent_file_listing
-    puts @torrent.files_objects
+  def test_torrent_add_by_base
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
+
+    metainfo = ""
+    File.open(file, 'r') do |file|
+      tmp = file.read
+      metainfo += Base64.encode64 tmp
+    end
+
+    torrent = Trans::Api::Torrent.add_metainfo(metainfo, paused: true)
+    assert torrent.name == "debian-6.0.6-amd64-CD-5.iso"
+    torrent.delete!
+
   end
 
 

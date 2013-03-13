@@ -18,6 +18,7 @@ module Trans
 
       class << self
         def config=(config = {})
+          config[:port] = config[:port].to_i if config.include? :port
           @@config = config
         end
       end
