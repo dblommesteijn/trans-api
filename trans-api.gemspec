@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Trans::Api::VERSION
   gem.authors       = ["Dennis Blommesteijn"]
   gem.email         = ["dennis@blommesteijn.com"]
-  gem.description   = %q{transmission torrent client rpc interface library}
-  gem.summary       = %q{transmission torrent client rpc interface library}
+  gem.description   = %q{Transmission RPC API for Ruby on Rails (gem).}
+  gem.summary       = %q{Transmission RPC API for Ruby on Rails (gem)}
   gem.homepage      = ""
 
   # dependencies
