@@ -14,18 +14,18 @@ OSX:
 
 This gem is (build and) tested with:
 
-  OSX Lion, Mountain Lion
+  OSX Lion, Mountain Lion, Mavericks
 
-  Ruby 1.9.3
+  Ruby 1.9.3, 2.1.0
 
-  Rails: 3.2.8, 3.2.9
+  Rails: 3.2.8, 3.2.9, 4.0.3
 
-  Transmission 2.73 (13589)
+  Transmission 2.73 (13589) - 2.82 (14160)
 
 
 ### Roadmap
 
-* Version (0.0.1) (current)
+* Version (0.0.1)
 
   Initial project import.
 
@@ -39,6 +39,10 @@ This gem is (build and) tested with:
 
   Torrent object 'waitfor' helper to check for lambda after/before calling it's chained cousin
 
+* Version (0.0.3)
+
+  TBA
+
 
 ### Known Issues
 
@@ -49,7 +53,7 @@ The Transmission RPC call 'torrent-remove' (implemented as torrent.delete! and T
 
 Add this line to your application's Gemfile:
 
-    gem 'trans-api', git: "git://github.com/dblommesteijn/trans-api.git"
+    gem 'trans-api', github: "dblommesteijn/trans-api"
 
 And then execute:
 
@@ -157,8 +161,18 @@ Trans::Api::Torrent.delete_all torrents
 Add torrent file
 
 ```ruby
+file = File.open('some file here')
 options = {paused: true}
-Trans::Api::Torrent.add_file filename, options
+Trans::Api::Torrent.add_file file, options
+```
+
+Add torrent file (via base64)
+
+```ruby
+file = File.open('some file here')
+options = {paused: true}
+base64_file_contents = Base64.encode64 file.read
+Trans::Api::Torrent.add_metainfo base64_file_contents, options
 ```
 
 Get all fields
@@ -331,4 +345,7 @@ file.stat
 ```
 
 NOTE: changed preferences (want, unwant) set options on the linked Torrent object, after saving torrent (torrent.save!) file mutations are stored.
+
+
+
 
