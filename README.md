@@ -41,12 +41,21 @@ This gem is (build and) tested with:
 
 * Version (0.0.3)
 
-  TBA
+  Querying name before add (duplicate detect), not hammering torrent-add (due to a transmission BUG)
+
+
+### Changelog
+
+* Version (0.0.3/ master)
+  
+  Torrent.add_metainfo(base64, filename, options={}) -> requires a filename parameter
 
 
 ### Known Issues
 
 The Transmission RPC call 'torrent-remove' (implemented as torrent.delete! and Torrent::delete_all!) will crash the daemon! This is NOT a known Transmission issue.
+
+Due to a Transmission bug (https://trac.transmissionbt.com/ticket/5614) duplicate torrents are accepted by the RPC call. The GUI will eventually crash the daemon, when interacting with these duplicate files (or instances). Torrent.add_file/ add_metainfo queries for duplicates to omit this bug.
 
 
 ## Installation
@@ -170,9 +179,10 @@ Add torrent file (via base64)
 
 ```ruby
 file = File.open('some file here')
+file_name = File.basename(file, ".*") # required >= 0.0.3/ master
 options = {paused: true}
 base64_file_contents = Base64.encode64 file.read
-Trans::Api::Torrent.add_metainfo base64_file_contents, options
+Trans::Api::Torrent.add_metainfo base64_file_contents, file_name, options
 ```
 
 Get all fields

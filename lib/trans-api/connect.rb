@@ -152,8 +152,11 @@ module Trans
         data = METHODS[:torrent_add]
         data[:arguments] = argument_name_to_api arguments
         ret = self.do(:post, data)
+        # puts JSON.parse(ret[:response].body).inspect
         torrents = JSON.parse ret[:response].body.gsub("-","_"), {symbolize_names: true}
         raise torrents[:result] unless valid? torrents, data[:tag]
+        # omiting BUG: https://trac.transmissionbt.com/ticket/5614
+        return torrents[:arguments][:torrent_duplicate] if torrents[:arguments].include?(:torrent_duplicate)
         torrents[:arguments][:torrent_added]
       end
 

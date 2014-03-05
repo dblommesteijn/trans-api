@@ -13,10 +13,11 @@ require File.expand_path(File.dirname(__FILE__) + "/../../lib/trans-api")
 
 class TransTorrentObject < Test::Unit::TestCase
 
-  CONFIG = { host: "localhost", port: 8078, user: "pinguin", pass: "100110", path: "/transmission/rpc" }
-
   def setup
-    Trans::Api::Client.config = CONFIG
+    @CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
+    @CONFIG = JSON.parse(ENV["CONFIG"], symbolize_names: true) if ENV.include? "CONFIG"
+
+    Trans::Api::Client.config = @CONFIG
     Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
     # add a testing torrent
@@ -250,6 +251,15 @@ class TransTorrentObject < Test::Unit::TestCase
     assert torrent.downloadDir == file
   end
 
+  def test_duplicate_file_upload
+    # add test torrents
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
+    # hammer duplicate torrent
+    torrent = nil
+    10.times { |t| torrent = Trans::Api::Torrent.add_file(file, paused: true) }
+    assert Trans::Api::Torrent.all.size == 2
+    torrent.delete!
+  end
 
   def test_queue_movement
     # get queueposition as well
@@ -350,7 +360,12 @@ class TransTorrentObject < Test::Unit::TestCase
     torrent = Trans::Api::Torrent.add_metainfo(metainfo, paused: true)
     assert torrent.name == "debian-6.0.6-amd64-CD-5.iso"
     torrent.delete!
+  end
 
+  def test_find_torrent_by_value_name
+    torrent = Trans::Api::Torrent.find_by_field_value(:name, "debian-6.0.6-amd64-CD-1.iso")
+    assert !torrent.nil?
+    assert torrent.name == "debian-6.0.6-amd64-CD-1.iso"
   end
 
 

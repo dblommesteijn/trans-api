@@ -2,7 +2,8 @@ require 'rubygems'
 require 'test/unit'
 require File.expand_path(File.dirname(__FILE__) + "/../../lib/trans-api")
 
-
+# run with config options
+#CONFIG="{\"host\":\"localhost\",\"port\":9091,\"user\":\"admin\",\"pass\":\"admin\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_connect.rb
 
 #
 # Unit test for Transmission RPC+json
@@ -12,10 +13,11 @@ require File.expand_path(File.dirname(__FILE__) + "/../../lib/trans-api")
 
 class TransConnect < Test::Unit::TestCase
 
-  CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
-
   def setup
-    Trans::Api::Client.config = CONFIG
+    @CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
+    @CONFIG = JSON.parse(ENV["CONFIG"], symbolize_names: true) if ENV.include? "CONFIG"
+
+    Trans::Api::Client.config = @CONFIG
 
     # add a testing torrent
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-1.iso.torrent")
@@ -24,7 +26,7 @@ class TransConnect < Test::Unit::TestCase
   end
 
   def teardown
-    Trans::Api::Client.config = CONFIG
+    Trans::Api::Client.config = @CONFIG
 
     # remove the testing torrent
     id = @torrent.id
@@ -39,19 +41,19 @@ class TransConnect < Test::Unit::TestCase
   # SESSIONS
 
   def test_session_get
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
     session = tc.session_get
     assert session.size > 0, "no arguments found"
   end
 
   def test_session_stats
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
     session = tc.session_stats
     assert session.size > 0, "no arguments found"
   end
 
   def test_session_set
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
 
     # get session
     session_get = tc.session_get
@@ -91,7 +93,7 @@ class TransConnect < Test::Unit::TestCase
   end
 
   def test_session_close
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
     session_get = tc.session_get
     #NOTE: will shut the daemon down!!
     #    session_close = tc.session_close
@@ -101,7 +103,7 @@ class TransConnect < Test::Unit::TestCase
   # TORRENTS
 
   def test_torrent_get
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
 
     # receive torrent list
     torrents = tc.torrent_get([:id, :name, :status])
@@ -126,7 +128,7 @@ class TransConnect < Test::Unit::TestCase
   end
 
   def test_torrent_set
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
 
     # get torrent list
     torrents = tc.torrent_get([:id, :name, :bandwidthPriority])
@@ -156,7 +158,7 @@ class TransConnect < Test::Unit::TestCase
 
 
   def test_torrent_start_stop_single
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
 
     torrents = tc.torrent_get([:id, :name, :status])
 
@@ -202,7 +204,7 @@ class TransConnect < Test::Unit::TestCase
   end
 
   def test_torrent_start_stop_multi
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
     torrents = tc.torrent_get([:id, :name, :status])
 
 
@@ -241,7 +243,7 @@ class TransConnect < Test::Unit::TestCase
   end
 
   def test_torrent_add_remove_single
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
 
     # add test file
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
@@ -266,7 +268,7 @@ class TransConnect < Test::Unit::TestCase
 
 
   def test_torrent_files_unwatched
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
     torrents = tc.torrent_get([:id, :name, :status, :files, :fileStats])
 
     torrents.each do |torrent|
@@ -278,7 +280,7 @@ class TransConnect < Test::Unit::TestCase
 
 
   def test_torrent_start_now
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
     # get first torrent
     torrent = tc.torrent_get([:id, :name, :status]).first
     # start now
@@ -290,7 +292,7 @@ class TransConnect < Test::Unit::TestCase
   end
 
   def test_torrent_verify
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
     torrents = tc.torrent_get([:id, :name, :status])
 
     torrents.each do |torrent|
@@ -302,7 +304,7 @@ class TransConnect < Test::Unit::TestCase
   end
 
   def test_torrent_reannounce
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
     torrents = tc.torrent_get([:id, :name, :status])
 
     torrents.each do |torrent|
@@ -314,7 +316,7 @@ class TransConnect < Test::Unit::TestCase
 
 
   def test_torrent_set_location
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
 
     # new target
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/download_tmp/")
@@ -341,14 +343,14 @@ class TransConnect < Test::Unit::TestCase
   # MISC
 
   def test_blocklist_update
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
     response = tc.blocklist_update
     assert response.include? :blocklist_size
     assert response[:blocklist_size].class == Fixnum
   end
 
   def test_port_test
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
     response = tc.port_test
     assert response.include? :port_is_open
     assert response[:port_is_open].class == FalseClass || response[:port_is_open].class == TrueClass
@@ -358,7 +360,7 @@ class TransConnect < Test::Unit::TestCase
   # QUEUE
 
   def test_queue_movement
-    tc = Trans::Api::Connect.new CONFIG
+    tc = Trans::Api::Connect.new @CONFIG
 
     torrents = []
 

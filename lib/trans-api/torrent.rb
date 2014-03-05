@@ -1,6 +1,8 @@
 module Trans
   module Api
 
+    require 'pathname'
+
     #
     # Torrent class
     #
@@ -199,6 +201,9 @@ module Trans
 
         def add_file(filename, options={})
           raise "file not found: #{filename}" unless ::File.exists? filename
+          # filter duplicates
+          find = Trans::Api::Torrent.find_by_field_value(:name, ::File.basename(filename, ".*"))
+          return find unless find.nil?
           client = Client.new
           options[:filename] = filename
           torrent = client.connect.torrent_add options
@@ -206,8 +211,12 @@ module Trans
           Torrent.new torrent: torrent
         end
 
-        def add_metainfo(metainfo, options={})
+        def add_metainfo(metainfo, name, options={})
+          raise "name empty" if name.nil? || name == ""
           options[:metainfo] = metainfo
+          # filter duplicates
+          find = Trans::Api::Torrent.find_by_field_value(:name, name)
+          return find unless find.nil?
           client = Client.new
           torrent = client.connect.torrent_add options
           torrent = client.connect.torrent_get( @@default_fields, [torrent[:id]]).first
