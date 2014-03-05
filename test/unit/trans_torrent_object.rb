@@ -3,6 +3,8 @@ require 'rubygems'
 require 'test/unit'
 require File.expand_path(File.dirname(__FILE__) + "/../../lib/trans-api")
 
+# run with config options
+#CONFIG="{\"host\":\"localhost\",\"port\":9091,\"user\":\"admin\",\"pass\":\"admin\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_torrent_object.rb
 
 
 #

@@ -4,6 +4,8 @@ require 'test/unit'
 require File.expand_path(File.dirname(__FILE__) + "/../../lib/trans-api")
 
 
+# run with config options
+#CONFIG="{\"host\":\"localhost\",\"port\":9091,\"user\":\"admin\",\"pass\":\"admin\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_session_object.rb
 
 #
 # Unit test for Transmission RPC+json
@@ -13,10 +15,12 @@ require File.expand_path(File.dirname(__FILE__) + "/../../lib/trans-api")
 
 class TransSessionObject < Test::Unit::TestCase
 
-  CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
 
   def setup
-    Trans::Api::Client.config = CONFIG
+    @CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
+    @CONFIG = JSON.parse(ENV["CONFIG"], symbolize_names: true) if ENV.include? "CONFIG"
+
+    Trans::Api::Client.config = @CONFIG
   end
 
 
