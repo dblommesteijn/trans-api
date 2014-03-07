@@ -34,6 +34,18 @@ module Trans
 				@fields[:fileStat]
 			end
 
+			def bytes_completed
+				@fields[:bytesCompleted]
+			end
+
+			def bytes_total
+				@fields[:length]
+			end
+
+			def priority
+				@fields[:fileStat][:priority]
+			end
+
 			def unwant
 				@torrent_fields[:files_wanted].delete self.id if @torrent_fields[:files_wanted].include? self.id
 				@torrent_fields[:files_unwanted] << self.id unless @torrent_fields[:files_unwanted].include? self.id

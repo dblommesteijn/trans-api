@@ -88,8 +88,10 @@ module Trans
         torrent = @client.connect.torrent_get([:files, :fileStats], [self.id]).first
         @fields[:files] = torrent[:files]
         @fields[:fileStatus] = torrent[:fileStats]
-        @fields[:files].each_with_index{ |f,i| ret << Trans::Api::File.new( torrent: self, fields: @fields,
-          file: f.merge(id: i).merge(fileStat: torrent[:fileStats][i])) }
+        @fields[:files].each_with_index do |f,i| 
+          ret << Trans::Api::File.new( torrent: self, fields: @fields,
+            file: f.merge(id: i).merge(fileStat: torrent[:fileStats][i]))
+        end
         ret
       end
 
