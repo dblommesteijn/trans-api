@@ -43,6 +43,8 @@ This gem is (build and) tested with:
 
   Querying name before add (duplicate detect), not hammering torrent-add (due to a transmission BUG)
 
+  Added some File internal fields (total and completed transfer)
+
 
 ### Changelog
 
