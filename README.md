@@ -10,7 +10,7 @@ OSX:
   Transmission > Preferences > Remote (tab) > Enable remote access
 
 
-### Platforms
+### Platforms (tested)
 
 This gem is (build and) tested with:
 
@@ -45,13 +45,20 @@ This gem is (build and) tested with:
 
   Added some File internal fields (total and completed transfer)
 
+# Version (0.0.4)
+
+  TBA
+
 
 ### Changelog
 
-* Version (0.0.3/ master)
+* Version (0.0.3)
   
   Torrent.add_metainfo(base64, filename, options={}) -> requires a filename parameter
 
+* Version (0.0.4)
+
+  TBA
 
 ### Known Issues
 
