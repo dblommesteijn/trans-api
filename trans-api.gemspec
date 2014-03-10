@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.version       = Trans::Api::VERSION
   gem.authors       = ["Dennis Blommesteijn"]
   gem.email         = ["dennis@blommesteijn.com"]
-  gem.description   = %q{Transmission RPC API for Ruby on Rails (gem).}
-  gem.summary       = %q{Transmission RPC API for Ruby on Rails (gem)}
-  gem.homepage      = ""
+  gem.description   = %q{Transmission (bittorrent client) RPC API for Ruby on Rails (gem).}
+  gem.summary       = %q{Transmission (bittorrent client) RPC API for Ruby on Rails (gem)}
+  gem.homepage      = "https://github.com/dblommesteijn/trans-api"
 
   # dependencies
   gem.add_dependency 'nokogiri', "> 1.5.0"
