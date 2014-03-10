@@ -71,11 +71,28 @@ module Trans
         @fields = @client.connect.session_get
         @old_fields = @fields.clone
         @last_error = {error: "", message: ""}
+        nil
       end
 
 
       def metaclass
         class << self; self; end
+      end
+
+      class << self
+        def alt_speed_time_day_options
+          ret = []
+          ret << ["Sunday", 1]
+          ret << ["Monday", 2]
+          ret << ["Tuesday", 4]
+          ret << ["Wednesday", 8]
+          ret << ["Thursday", 16]
+          ret << ["Friday", 32]
+          ret << ["Weekdays", 62]
+          ret << ["Saturday", 64]
+          ret << ["Weekends", 65]
+          ret.sort{|a,b| a.last <=> b.last}
+        end
       end
     end
 

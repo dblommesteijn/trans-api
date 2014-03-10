@@ -47,7 +47,7 @@ This gem is (build and) tested with:
 
 # Version (0.0.4)
 
-  TBA
+  Added Session.alt_speed_time_day_options, returns a list of values to set `alt_speed_time_day`
 
 
 ### Changelog
