@@ -83,4 +83,17 @@ class TransSessionObject < Test::Unit::TestCase
   end
 
 
+  def test_swap_configs
+    # test default operation
+    session = Trans::Api::Session.instance
+    assert session.fields_and_values.size > 0, "no fields and values loaded"
+
+    # insert a broken config
+    broken_config = { host: "localhost", port: 9091, user: "akdljflkasjdlfk", pass: "alskdfjlkajsdfl", path: "/transmission/rpc" }
+    Trans::Api::Client.config = broken_config
+    session.reload!
+    assert session.stats!.nil?, "stat should be broken!"
+  end
+
+
 end

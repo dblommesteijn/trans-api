@@ -49,8 +49,10 @@ This gem is (build and) tested with:
 
   Added Session.alt_speed_time_day_options, returns a list of values to set `alt_speed_time_day`
 
+  Added Session.reload!, that reconnects to the client (for example using alternate configs)
 
-### Changelog
+
+### Changelog (in existing calls)
 
 * Version (0.0.3)
   
@@ -315,6 +317,12 @@ Reset (reload object, request information and not saving changes)
 
 ```ruby
 session.reset!
+```
+
+Reload (reload the client connection, and configuration)
+
+```ruby
+session.reload!
 ```
 
 NOTE: defined session fields are defined as instance methods to the Session object

@@ -16,27 +16,7 @@ module Trans
 
 
       def initialize
-        @client = Client.new
-        self.reset!
-
-        # map fields to accessors
-        @fields.each do |k, v|
-          # setter
-          self.metaclass.send(:define_method, "#{k}=") do |value|
-            if v.class == value.class
-              @fields[k] = value
-            else
-              msg = "invalid type: #{value.class}, expected: #{v.class}"
-              @last_error[:message] = msg
-              raise msg
-            end
-          end
-          # getter
-          self.metaclass.send(:define_method, "#{k}") do
-            @fields[k]
-          end
-        end
-
+        self.reload!
       end
 
       def fields
@@ -72,6 +52,30 @@ module Trans
         @old_fields = @fields.clone
         @last_error = {error: "", message: ""}
         nil
+      end
+
+      def reload!
+        @client = Client.new
+        self.reset!
+
+        # map fields to accessors
+        @fields.each do |k, v|
+          # setter
+          self.metaclass.send(:define_method, "#{k}=") do |value|
+            if v.class == value.class
+              @fields[k] = value
+            else
+              msg = "invalid type: #{value.class}, expected: #{v.class}"
+              @last_error[:message] = msg
+              raise msg
+            end
+          end
+          # getter
+          self.metaclass.send(:define_method, "#{k}") do
+            @fields[k]
+          end
+        end
+
       end
 
 
