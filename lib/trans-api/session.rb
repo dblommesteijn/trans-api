@@ -95,6 +95,7 @@ module Trans
           ret << ["Weekdays", 62]
           ret << ["Saturday", 64]
           ret << ["Weekends", 65]
+          ret << ["Every Day", 127]
           ret.sort{|a,b| a.last <=> b.last}
         end
       end
