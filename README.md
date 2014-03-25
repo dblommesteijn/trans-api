@@ -334,6 +334,8 @@ Enable set and update blocklist
 session.blocklist_url = "http://list.iblocklist.com/?list=bt_level3&fileformat=p2p&archiveformat=gz"
 # enable blocklist
 session.blocklist_enable = true
+# save changes
+session.save!
 # force update 
 begin
   session.update_blocklist!
