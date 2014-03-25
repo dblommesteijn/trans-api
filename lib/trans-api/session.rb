@@ -62,7 +62,7 @@ module Trans
         @fields.each do |k, v|
           # setter
           self.metaclass.send(:define_method, "#{k}=") do |value|
-            if v.class == value.class
+            if v.class == value.class || value.is_a?(::Boolean)
               @fields[k] = value
             else
               msg = "invalid type: #{value.class}, expected: #{v.class}"
@@ -75,8 +75,14 @@ module Trans
             @fields[k]
           end
         end
-
       end
+
+      def update_blocklist!
+        @client.connect.blocklist_update
+      end
+
+
+      # blocklist-update
 
 
       def metaclass
@@ -97,6 +103,10 @@ module Trans
           ret << ["Weekends", 65]
           ret << ["Every Day", 127]
           ret.sort{|a,b| a.last <=> b.last}
+        end
+
+        def encryption_levels
+          ["required", "preferred", "tolerated"].map{|t| [t.humanize, t]}
         end
       end
     end

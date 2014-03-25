@@ -5,8 +5,13 @@ require File.expand_path(File.dirname(__FILE__) + "/trans-api/session")
 require File.expand_path(File.dirname(__FILE__) + "/trans-api/torrent")
 require File.expand_path(File.dirname(__FILE__) + "/trans-api/file")
 
+# boolean helper
+module Boolean; end
+class TrueClass; include Boolean; end
+class FalseClass; include Boolean; end
+
+# trans api placeholder
 module Trans
   module Api
-    # placeholder
   end
 end

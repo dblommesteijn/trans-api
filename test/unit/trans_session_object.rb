@@ -15,6 +15,8 @@ require File.expand_path(File.dirname(__FILE__) + "/../../lib/trans-api")
 
 class TransSessionObject < Test::Unit::TestCase
 
+  BLOCKLIST = "http://list.iblocklist.com/?list=bt_level3&fileformat=p2p&archiveformat=gz"
+
 
   def setup
     @CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }
@@ -93,6 +95,44 @@ class TransSessionObject < Test::Unit::TestCase
     Trans::Api::Client.config = broken_config
     session.reload!
     assert session.stats!.nil?, "stat should be broken!"
+  end
+
+
+  def test_set_blocklist
+    session = Trans::Api::Session.instance
+    session.blocklist_enabled = false
+    session.blocklist_url = ""
+    session.save!
+    # verify
+    session.reload!
+    assert session.blocklist_url == "", "url not updated"
+    assert session.blocklist_enabled == false, "boolean not toggled"
+    # save blocklist to session
+    session = Trans::Api::Session.instance
+    session.blocklist_url = BLOCKLIST
+    session.blocklist_enabled = true
+    session.save!
+    # verify
+    session.reload!
+    assert session.blocklist_url == BLOCKLIST, "blocklist not saved!"
+    # force blocklist update
+    response = session.update_blocklist!
+    session.reload!
+    assert session.blocklist_size == response[:blocklist_size], "blocklist not updated"
+  end
+
+  def test_set_wrong_blocklist
+    session = Trans::Api::Session.instance
+    session.blocklist_enabled = false
+    session.blocklist_url = ""
+    session.save!
+    session.reload!
+    begin
+      session.update_blocklist!
+      assert false, "should not be possible without an url"
+    rescue Exception => e
+      assert true
+    end
   end
 
 
