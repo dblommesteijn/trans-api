@@ -51,6 +51,8 @@ This gem is (build and) tested with:
 
   Added Session.reload!, that reconnects to the client (for example using alternate configs)
 
+  Added Session.update_blocklist!, updating the current set blocklist
+
 
 ### Changelog (in existing calls)
 
@@ -323,6 +325,21 @@ Reload (reload the client connection, and configuration)
 
 ```ruby
 session.reload!
+```
+
+Enable set and update blocklist
+
+```ruby
+# set an url
+session.blocklist_url = "http://list.iblocklist.com/?list=bt_level3&fileformat=p2p&archiveformat=gz"
+# enable blocklist
+session.blocklist_enable = true
+# force update 
+begin
+  session.update_blocklist!
+rescue Exception => e
+  # handle http exceptions here!
+end
 ```
 
 NOTE: defined session fields are defined as instance methods to the Session object
