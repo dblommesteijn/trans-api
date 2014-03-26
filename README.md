@@ -45,7 +45,7 @@ This gem is (build and) tested with:
 
   Added some File internal fields (total and completed transfer)
 
-# Version (0.0.4)
+* Version (0.0.4)
 
   Added Session.alt_speed_time_day_options, returns a list of values to set `alt_speed_time_day`
 
@@ -54,7 +54,7 @@ This gem is (build and) tested with:
   Added Session.update_blocklist!, updating the current set blocklist
 
 
-### Changelog (in existing calls)
+### Changelog
 
 * Version (0.0.3)
   
@@ -80,10 +80,6 @@ Add this line to your application's Gemfile:
 And then execute:
 
     $ bundle
-
-Or install it yourself as:
-
-    $ gem install trans-api
 
 
 ## Setup
