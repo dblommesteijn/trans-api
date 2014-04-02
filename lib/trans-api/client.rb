@@ -7,7 +7,8 @@ module Trans
       # construct
 
       def initialize(options={})
-        args = @@config
+        # @@config ||= {}
+        args = @@config || {}
         args.merge!(options)
         @conn = Connect.new args
       end

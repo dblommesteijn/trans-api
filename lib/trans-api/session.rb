@@ -81,6 +81,14 @@ module Trans
         @client.connect.blocklist_update
       end
 
+      def connected?
+        begin
+          s = self.stats!
+          return s.is_a?(Hash)
+        rescue StandardError
+          false
+        end
+      end
 
       # blocklist-update
 

@@ -93,8 +93,18 @@ class TransSessionObject < Test::Unit::TestCase
     # insert a broken config
     broken_config = { host: "localhost", port: 9091, user: "akdljflkasjdlfk", pass: "alskdfjlkajsdfl", path: "/transmission/rpc" }
     Trans::Api::Client.config = broken_config
-    session.reload!
-    assert session.stats!.nil?, "stat should be broken!"
+    begin
+      session.reload!
+      assert false, "should have raised an exception"
+    rescue
+      assert true
+    end
+    begin
+      session.stats!.nil?
+      assert false, "stat should be broken!"
+    rescue
+      assert true
+    end
   end
 
 

@@ -53,16 +53,17 @@ This gem is (build and) tested with:
 
   Added Session.update_blocklist!, updating the current set blocklist
 
+* Version (0.0.5)
+  
+  Added Session.connected?, checks if there is a valid connection to the client
 
-### Changelog
+
+### Changelog (call changes)
 
 * Version (0.0.3)
   
   Torrent.add_metainfo(base64, filename, options={}) -> requires a filename parameter
 
-* Version (0.0.4)
-
-  TBA
 
 ### Known Issues
 
@@ -82,7 +83,7 @@ And then execute:
     $ bundle
 
 
-## Setup
+## Configuration
 
 Define a configuration for your connection (initialize script)
 
@@ -115,10 +116,6 @@ torrent = Trans::Api::Torrent.find id
 # calls the rpc to receive files from the defined torrent
 torrent.files
 ```
-
-## Examples
-
-  Check the examples/ folder or Unit tests: test/unit/trans_ (session/torrent) _object.rb
 
 
 ## Usage
@@ -389,5 +386,34 @@ file.stat
 NOTE: changed preferences (want, unwant) set options on the linked Torrent object, after saving torrent (torrent.save!) file mutations are stored.
 
 
+
+## Running Tests
+
+Run the unittest embedded with the project from the commandline. Configure the CONFIG variable with an escaped json to provide configuration for your transmission client.
+
+```bash
+# example format: define CONFIG in escaped json & run the test
+$ CONFIG="{}" ruby -I test test/unit/your_test.rb
+```
+
+Run 'test/unit/trans_connect.rb' to test the intermediate layer between the RPC API and wrappers.
+
+```bash
+$ CONFIG="{\"host\":\"localhost\",\"port\":9091,\"user\":\"youruser\",\"pass\":\"yourpass\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_connect.rb
+```
+
+Run 'test/unit/trans_session_object.rb' to test the working of Trans::Api::Session.
+
+```bash
+# run unit test session
+$ CONFIG="{\"host\":\"localhost\",\"port\":9091,\"user\":\"youruser\",\"pass\":\"yourpass\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_session_object.rb
+```
+
+Run 'test/unit/trans_torrent_object.rb' to test the working of Trans::Api::Torrent.
+
+```bash
+# run unit test session
+$ CONFIG="{\"host\":\"localhost\",\"port\":9091,\"user\":\"youruser\",\"pass\":\"yourpass\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_torrent_object.rb
+```
 
 

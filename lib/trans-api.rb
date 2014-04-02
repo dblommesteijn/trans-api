@@ -6,7 +6,9 @@ require File.expand_path(File.dirname(__FILE__) + "/trans-api/torrent")
 require File.expand_path(File.dirname(__FILE__) + "/trans-api/file")
 
 # boolean helper
-if Boolean.nil?
+begin
+  Boolean.nil?
+rescue NameError
   module Boolean; end
   class TrueClass; include Boolean; end
   class FalseClass; include Boolean; end
