@@ -206,7 +206,86 @@ class TransTorrentObject < Test::Unit::TestCase
     torrent = Trans::Api::Torrent.delete_all torrents, delete_local_data: true
 
     #TODO: add assert here!!
+  end
 
+  def test_torrent_rapid_delete
+    # add a sample torrent
+    50.times.each do |t|
+      ts = []
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-3.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-4.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-6.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-7.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      # verify push    
+      torrents = Trans::Api::Torrent.all
+      assert torrents.size == 7, "not 7 torrents found"
+      # detect 
+      ts.each do |torrent|
+        torrent.delete! delete_local_data: true
+      end
+
+      # wait for removal
+      i = 0
+      while true do
+        torrents = Trans::Api::Torrent.all
+        break if torrents.size == 1
+        sleep 0.1
+        i += 1
+        assert false, "remove not received by client (iteration: #{i}/50)" if i > 20
+      end
+
+      # validate removal
+      assert torrents.size == 1, "not 1 torrents found"
+    end
+  end
+
+  def test_torrent_rapid_safe_delete
+    # add a sample torrent
+    50.times.each do |t|
+      ts = []
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-3.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-4.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-6.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-7.iso.torrent")
+      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      # verify push    
+      torrents = Trans::Api::Torrent.all
+      assert torrents.size == 7, "not 7 torrents found"
+      # detect 
+      ts.each do |torrent|
+        # use waitfor to check the last_error `reset_exception`
+        # the torrent object cannot be reloaded (probably because it's missing)
+        torrent.waitfor(lambda{|t| t.last_error[:error] == "reset_exception"}).delete!(delete_local_data: true)
+      end
+
+      # wait for removal
+      i = 0
+      while true do
+        torrents = Trans::Api::Torrent.all
+        break if torrents.size == 1
+        sleep 0.1
+        i += 1
+        assert false, "remove not received by client (iteration: #{i}/50)" if i > 20
+      end
+
+      # validate removal
+      assert torrents.size == 1, "not 1 torrents found"
+    end
   end
 
 

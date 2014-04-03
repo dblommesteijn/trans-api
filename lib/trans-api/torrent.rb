@@ -53,6 +53,10 @@ module Trans
         self.attach_methods!
       end
 
+      def last_error
+        @last_error
+      end
+
       # placeholder for fields
       def metaclass
         class << self; self; end
@@ -75,6 +79,7 @@ module Trans
           @client.connect.torrent_set changed, [self.id]
           @old_fields = @fields.clone
         end
+        nil
       end
 
       # get registered fields
@@ -97,9 +102,14 @@ module Trans
 
       # reload current object
       def reset!
-        @fields = @client.connect.torrent_get( @fields.map{|k,v| k}, [self.id]).first
-        @old_fields = @fields.clone
-        @last_error = {error: "", message: ""}
+        begin
+          @fields = @client.connect.torrent_get( @fields.map{|k,v| k}, [self.id]).first
+          @old_fields = @fields.clone unless @fields.nil?
+          @last_error = {error: "", message: ""}
+        rescue Exception => e
+          @last_error = {error: "reset_exception", message: "cannot reset torrent (probably removed)"}
+        end
+        nil
       end
 
       def start!
@@ -287,7 +297,7 @@ module Trans
       def method_missing(method, *args)
 
         unless args.empty?
-          @target_object.send method, args
+          @target_object.send method, *args
         else
           @target_object.send method
         end
@@ -297,11 +307,16 @@ module Trans
       end
 
       def wait
-        # keep trying task (and refreshing the torrent file)
-        while true do
-          @target_object.reset!
-          t = @task.call @target_object
-          break if t # task achieved!
+        begin
+          # keep trying task (and refreshing the torrent file)
+          while true do
+            @target_object.reset!
+            t = @task.call @target_object
+            break if t # task achieved!
+          end
+        rescue Exception => e
+          # some error has occured ()
+          @@last_error = {error: "wait_exception", message: e.message}
         end
       end
 
