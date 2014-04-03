@@ -347,10 +347,11 @@ Getting files from a torrent (file cannot be used standalone, it's an helper cla
 ```ruby
 id = 1
 torrent = Trans::Api::Torrent.find id
-files = torrent.files_objects
-files.each do |file|
-	# manipulate file here!
+torrent.files_objects.each do |file|
+	# manipulate or stat the file here! (unwant, want)
 end
+# save the torrent (internal changes to files_objects are saved as well)
+torrent.save!
 ```
 
 File name
@@ -377,7 +378,7 @@ File wanted? (marked for download)
 file.wanted?
 ```
 
-File stats
+File stat
 
 ```ruby
 file.stat
