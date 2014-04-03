@@ -14,40 +14,40 @@ OSX:
 
 This gem is (build and) tested with:
 
-  OSX: Lion, Mountain Lion, Mavericks
-  Ruby: 1.9.3, 2.1.0
-  Rails: 3.2.8, 3.2.9, 4.0.3
-  Transmission 2.73 (13589) - 2.82 (14160)
+  *OSX: Lion, Mountain Lion, Mavericks
+  *Ruby: 1.9.3, 2.1.0
+  *Rails: 3.2.8, 3.2.9, 4.0.3
+  *Transmission 2.73 (13589) - 2.82 (14160)
 
 
 ### Roadmap
 
 * Version (0.0.1)
 
-  Initial project import.
+  *Initial project import.
 
 * Version (0.0.2)
 
-  Session object include: 'blocklist', 'port-test'
-  Torrent object include 'torrent-start-now', 'queue-move-top/up/down/bottom'
-  Torrent object 'delete_all!' explicit torrent references
-  Torrent object 'waitfor' helper to check for lambda after/before calling it's chained cousin
+  *Session object include: 'blocklist', 'port-test'
+  *Torrent object include 'torrent-start-now', 'queue-move-top/up/down/bottom'
+  *Torrent object 'delete_all!' explicit torrent references
+  *Torrent object 'waitfor' helper to check for lambda after/before calling it's chained cousin
 
 * Version (0.0.3)
 
-  Querying name before add (duplicate detect), not hammering torrent-add (due to a transmission BUG)
-  Added some File internal fields (total and completed transfer)
+  *Querying name before add (duplicate detect), not hammering torrent-add (due to a transmission BUG)
+  *Added some File internal fields (total and completed transfer)
 
 * Version (0.0.4)
 
-  Added Session.alt_speed_time_day_options, returns a list of values to set `alt_speed_time_day`
-  Added Session.reload!, that reconnects to the client (for example using alternate configs)
-  Added Session.update_blocklist!, updating the current set blocklist
+  *Added Session.alt_speed_time_day_options, returns a list of values to set `alt_speed_time_day`
+  *Added Session.reload!, that reconnects to the client (for example using alternate configs)
+  *Added Session.update_blocklist!, updating the current set blocklist
 
 * Version (0.0.5)
   
-  Added Session.connected?, checks if there is a valid connection to the client
-  Fixed Torrent.waitfor chained method arguements
+  *Added Session.connected?, checks if there is a valid connection to the client
+  *Fixed Torrent.waitfor chained method arguements
 
 
 
