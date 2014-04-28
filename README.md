@@ -24,7 +24,7 @@ This gem is (build and) tested with:
 
 * Version (0.0.1)
 
-  *Initial project import.
+  * Initial project import.
 
 * Version (0.0.2)
 
@@ -55,7 +55,7 @@ This gem is (build and) tested with:
 
 * Version (0.0.3)
   
-  Torrent.add_metainfo(base64, filename, options={}) -> requires a filename parameter
+  * Torrent.add_metainfo(base64, filename, options={}) -> requires a filename parameter
 
 
 ### Known Issues

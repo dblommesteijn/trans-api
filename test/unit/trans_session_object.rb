@@ -15,8 +15,8 @@ require File.expand_path(File.dirname(__FILE__) + "/../../lib/trans-api")
 
 class TransSessionObject < Test::Unit::TestCase
 
-  BLOCKLIST = "http://list.iblocklist.com/?list=bt_level3&fileformat=p2p&archiveformat=gz"
-
+  # BLOCKLIST = "http://list.iblocklist.com/?list=bt_level3&fileformat=p2p&archiveformat=gz"
+  BLOCKLIST = "http://list.iblocklist.com/?list=bt_level1&fileformat=p2p&archiveformat=gz"
 
   def setup
     @CONFIG = { host: "localhost", port: 9091, user: "admin", pass: "admin", path: "/transmission/rpc" }

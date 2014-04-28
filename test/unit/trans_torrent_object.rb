@@ -431,16 +431,19 @@ class TransTorrentObject < Test::Unit::TestCase
 
   def test_torrent_add_by_base
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
-
+    filename = File.basename(file, ".*")
     metainfo = ""
     File.open(file, 'r') do |file|
       tmp = file.read
       metainfo += Base64.encode64 tmp
     end
-
-    torrent = Trans::Api::Torrent.add_metainfo(metainfo, paused: true)
-    assert torrent.name == "debian-6.0.6-amd64-CD-5.iso"
-    torrent.delete!
+    torrent1 = Trans::Api::Torrent.add_metainfo(metainfo, filename, paused: true)
+    assert torrent1.name == "debian-6.0.6-amd64-CD-5.iso"
+    # test add duplicate (returns torrent1 reloaded)
+    torrent2 = Trans::Api::Torrent.add_metainfo(metainfo, filename, paused: true)
+    assert torrent1.id == torrent2.id
+    assert torrent1.name == torrent2.name
+    torrent1.delete!
   end
 
   def test_find_torrent_by_value_name

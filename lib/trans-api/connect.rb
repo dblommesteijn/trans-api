@@ -8,6 +8,7 @@ module Trans
       require 'json'
       require 'nokogiri'
       require 'net/http'
+      require 'timeout'
 
 
       METHODS = {
@@ -279,9 +280,16 @@ module Trans
 
         # request
         http = Net::HTTP.new uri.host, uri.port
-        resp = http.get(uri.request_uri, data.to_json, headers) if method == :get
-        resp = http.post(uri.request_uri, data.to_json, headers) if method == :post
-        raise "not implemented #{method} request!!" if method != :get && method != :post
+        Timeout::timeout(@conn[:timeout]) do
+          sleep 5
+          if method == :get
+            resp = http.get(uri.request_uri, data.to_json, headers) 
+          elsif method == :post
+            resp = http.post(uri.request_uri, data.to_json, headers)
+          else
+            raise "not implemented #{method} request!!" 
+          end
+        end
 
         # authorize via session id
         if resp.code.to_i == 409

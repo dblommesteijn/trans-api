@@ -2,7 +2,7 @@ module Trans
   module Api
 
     class Client
-      DEFAULT = {scheme: "http", host: "localhost", port: 9091, path: "/transmission/rpc", user: "admin", pass: "admin"}
+      DEFAULT = {scheme: "http", host: "localhost", port: 9091, path: "/transmission/rpc", user: "admin", pass: "admin", timeout: 5}
 
       # construct
 
@@ -20,6 +20,11 @@ module Trans
       class << self
         def config=(config = {})
           config[:port] = config[:port].to_i if config.include? :port
+          if config.include? :timeout
+            config[:timeout] = config[:timeout].to_i
+          else
+            config[:timeout] = 2
+          end
           @@config = config
         end
       end
