@@ -205,7 +205,12 @@ module Trans
 
       def blocklist_update
         data = METHODS[:blocklist_update]
+        # blocklist is a slow method (increase timeout)
+        tm = @conn[:timeout]
+        @conn[:timeout] = (@conn[:timeout] + 5) * 3
         ret = self.do(:post, data)
+        # reset original timeout
+        @conn[:timeout] = tm
         torrents = JSON.parse ret[:response].body.gsub("-","_"), {symbolize_names: true}
         raise torrents[:result] unless valid? torrents, data[:tag]
         torrents[:arguments]
@@ -280,8 +285,9 @@ module Trans
 
         # request
         http = Net::HTTP.new uri.host, uri.port
+        resp = nil
         Timeout::timeout(@conn[:timeout]) do
-          sleep 5
+          # sleep 5
           if method == :get
             resp = http.get(uri.request_uri, data.to_json, headers) 
           elsif method == :post

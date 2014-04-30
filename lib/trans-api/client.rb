@@ -23,7 +23,7 @@ module Trans
           if config.include? :timeout
             config[:timeout] = config[:timeout].to_i
           else
-            config[:timeout] = 2
+            config[:timeout] = DEFAULT[:timeout]
           end
           @@config = config
         end

@@ -356,6 +356,11 @@ class TransConnect < Test::Unit::TestCase
     assert response[:port_is_open].class == FalseClass || response[:port_is_open].class == TrueClass
   end
 
+  def test_timeout
+    # tc = Trans::Api::Connect.new @CONFIG
+    
+  end
+
 
   # QUEUE
 
