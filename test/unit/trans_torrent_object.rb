@@ -20,21 +20,21 @@ class TransTorrentObject < Test::Unit::TestCase
     @CONFIG = JSON.parse(ENV["CONFIG"], symbolize_names: true) if ENV.include? "CONFIG"
 
     Trans::Api::Client.config = @CONFIG
-    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
+    # Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
-    # add a testing torrent
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-1.iso.torrent")
-    @torrent = Trans::Api::Torrent.add_file file, paused: true
-    sleep 1
+    # # add a testing torrent
+    # file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-1.iso.torrent")
+    # @torrent = Trans::Api::Torrent.add_file file, paused: true
+    # sleep 1
   end
 
   def teardown
     # remove the testing torrent
-    id = @torrent.id
-    @torrent.delete! delete_local_data: true
-    self.signal_wait_until(lambda{|t| t.nil?}) do
-      Trans::Api::Torrent.find id
-    end
+    # id = @torrent.id
+    # @torrent.delete! delete_local_data: true
+    # self.signal_wait_until(lambda{|t| t.nil?}) do
+    #   Trans::Api::Torrent.find id
+    # end
   end
 
 
@@ -224,10 +224,10 @@ class TransTorrentObject < Test::Unit::TestCase
       ts << Trans::Api::Torrent.add_file(file, paused: true)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-7.iso.torrent")
       ts << Trans::Api::Torrent.add_file(file, paused: true)
-      # verify push    
+      # verify push
       torrents = Trans::Api::Torrent.all
       assert torrents.size == 7, "not 7 torrents found"
-      # detect 
+      # detect
       ts.each do |torrent|
         torrent.delete! delete_local_data: true
       end
@@ -263,10 +263,10 @@ class TransTorrentObject < Test::Unit::TestCase
       ts << Trans::Api::Torrent.add_file(file, paused: true)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-7.iso.torrent")
       ts << Trans::Api::Torrent.add_file(file, paused: true)
-      # verify push    
+      # verify push
       torrents = Trans::Api::Torrent.all
       assert torrents.size == 7, "not 7 torrents found"
-      # detect 
+      # detect
       ts.each do |torrent|
         # use waitfor to check the last_error `reset_exception`
         # the torrent object cannot be reloaded (probably because it's missing)

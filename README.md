@@ -45,7 +45,7 @@ This gem is (build and) tested with:
   * Added Session.update_blocklist!, updating the current set blocklist
 
 * Version (0.0.5)
-  
+
   * Added Session.connected?, checks if there is a valid connection to the client
   * Fixed Torrent.waitfor chained method arguements
 
@@ -54,7 +54,7 @@ This gem is (build and) tested with:
 ### Changelog (call changes)
 
 * Version (0.0.3)
-  
+
   * Torrent.add_metainfo(base64, filename, options={}) -> requires a filename parameter
 
 
@@ -327,7 +327,7 @@ session.blocklist_url = "http://list.iblocklist.com/?list=bt_level3&fileformat=p
 session.blocklist_enable = true
 # save changes
 session.save!
-# force update 
+# force update
 begin
   session.update_blocklist!
 rescue Exception => e
@@ -390,31 +390,74 @@ NOTE: changed preferences (want, unwant) set options on the linked Torrent objec
 
 Run the unittest embedded with the project from the commandline. Configure the CONFIG variable with an escaped json to provide configuration for your transmission client.
 
+* WARNING: torrents and files will be destroyed by these tests *
+
+
 ```bash
-# example format: define CONFIG in escaped json & run the test
-$ CONFIG="{}" ruby -I test test/unit/your_test.rb
+# example format: define CONFIG in escaped json
+$ CONFIG="{\"host\":\"localhost\",\"port\":1234,\"user\":\"youruser\",\"pass\":\"yourpass\",\"path\":\"/transmission/rpc\"}"
 ```
 
 Run 'test/unit/trans_connect.rb' to test the intermediate layer between the RPC API and wrappers.
 
 ```bash
-$ CONFIG="{\"host\":\"localhost\",\"port\":9091,\"user\":\"youruser\",\"pass\":\"yourpass\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_connect.rb
+$ ruby -I test test/unit/trans_connect.rb
 ```
 
 Run 'test/unit/trans_session_object.rb' to test the working of Trans::Api::Session.
 
 ```bash
 # run unit test session
-$ CONFIG="{\"host\":\"localhost\",\"port\":9091,\"user\":\"youruser\",\"pass\":\"yourpass\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_session_object.rb
+$ ruby -I test test/unit/trans_session_object.rb
 ```
 
 Run 'test/unit/trans_torrent_object.rb' to test the working of Trans::Api::Torrent.
 
 ```bash
 # run unit test session
-$ CONFIG="{\"host\":\"localhost\",\"port\":9091,\"user\":\"youruser\",\"pass\":\"yourpass\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_torrent_object.rb
+$ ruby -I test test/unit/trans_torrent_object.rb
 ```
 
 NOTE: test `test_torrent_rapid_delete` will fail because of an issue with rapid calling.
+
+
+### Vagrant
+
+Besides running your existing client with Transmission you can test on an isolated virtual machine via Vagrant.
+
+* Download Dependencies *
+
+Download and follow the installation instructions.
+
+* Vagrant: http://www.vagrantup.com/downloads.html
+* VirtualBox: https://www.virtualbox.org/wiki/Downloads
+
+
+##### Boot the Test VM
+
+Download and run the testing Debian Linux distribution with a test Transmission client.
+
+```bash
+$ cd /location/of/trans-api
+# download and start a testing box (will take some time)
+$ vagrant up testing
+```
+
+*Configure the CONFIG variable to target the VM*
+
+```bash
+$ CONFIG="{\"host\":\"10.0.0.2\",\"port\":19091,\"user\":\"admin\",\"pass\":\"adm1n\",\"path\":\"/transmission/rpc\"}"
+# run unit tests (section above)
+$ ruby -I test test/unit/trans_connect.rb
+```
+
+*NOTE: don't forget to HALT (and DESTROY) the VM when done!*
+
+```bash
+# power down VM
+$ vagrant halt testing
+# power down and destroy files
+$ vagrant destroy testing
+```
 
 

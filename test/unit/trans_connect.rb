@@ -19,21 +19,21 @@ class TransConnect < Test::Unit::TestCase
 
     Trans::Api::Client.config = @CONFIG
 
-    # add a testing torrent
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-1.iso.torrent")
-    @torrent = Trans::Api::Torrent.add_file file, paused: true
-    sleep 1
+    # # add a testing torrent
+    # file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-1.iso.torrent")
+    # @torrent = Trans::Api::Torrent.add_file file, paused: true
+    # sleep 1
   end
 
   def teardown
     Trans::Api::Client.config = @CONFIG
 
-    # remove the testing torrent
-    id = @torrent.id
-    @torrent.delete! delete_local_data: true
-    self.signal_wait_until(lambda{|t| t.nil?}) do
-      Trans::Api::Torrent.find id
-    end
+    # # remove the testing torrent
+    # id = @torrent.id
+    # @torrent.delete! delete_local_data: true
+    # self.signal_wait_until(lambda{|t| t.nil?}) do
+    #   Trans::Api::Torrent.find id
+    # end
   end
 
 
@@ -358,7 +358,7 @@ class TransConnect < Test::Unit::TestCase
 
   def test_timeout
     # tc = Trans::Api::Connect.new @CONFIG
-    
+
   end
 
 
