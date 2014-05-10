@@ -6,7 +6,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -q -y -o Dpkg::Options::="--force-co
 echo "======================================================="
 echo " Installing Dependencies... "
 echo "======================================================="
-sudo DEBIAN_FRONTEND=noninteractive apt-get -q -y -o Dpkg::Options::="--force-confdef" install ruby transmission-cli transmission-common transmission-daemon
+sudo DEBIAN_FRONTEND=noninteractive apt-get -q -y -o Dpkg::Options::="--force-confdef" install transmission-cli transmission-common transmission-daemon
 
 echo "======================================================="
 echo " Configuring... "
@@ -29,7 +29,7 @@ echo " VM is up and running!"
 echo " ---------------------"
 echo " Running service at: http://localhost:19091 (tunneled)"
 echo " - You can now start testing!"
-echo " $ CONFIG = \"{\\\"host\\\":\\\"localhost\\\",\\\"port\\\":\\\"19091\\\",\\\"user\\\":\\\"admin\\\",\\\"pass\\\":\\\"adm1n\\\",\\\"path\\\":\\\"/transmission/rpc\\\"}\""
-echo " $ ruby -I test test/unit/trans_connect.rb "
+echo " $ CONFIG=\"{\\\"host\\\":\\\"localhost\\\",\\\"port\\\":\\\"19091\\\",\\\"user\\\":\\\"admin\\\",\\\"pass\\\":\\\"adm1n\\\",\\\"path\\\":\\\"/transmission/rpc\\\"}\""
+echo " $ ruby -I test test/unit/trans_connect.rb"
 echo "======================================================="
 

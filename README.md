@@ -401,21 +401,21 @@ $ CONFIG="{\"host\":\"localhost\",\"port\":1234,\"user\":\"youruser\",\"pass\":\
 Run 'test/unit/trans_connect.rb' to test the intermediate layer between the RPC API and wrappers.
 
 ```bash
-$ ruby -I test test/unit/trans_connect.rb
+$ CONFIG="{\"host\":\"localhost\",\"port\":1234,\"user\":\"youruser\",\"pass\":\"yourpass\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_connect.rb
 ```
 
 Run 'test/unit/trans_session_object.rb' to test the working of Trans::Api::Session.
 
 ```bash
 # run unit test session
-$ ruby -I test test/unit/trans_session_object.rb
+$ CONFIG="{\"host\":\"localhost\",\"port\":1234,\"user\":\"youruser\",\"pass\":\"yourpass\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_session_object.rb
 ```
 
 Run 'test/unit/trans_torrent_object.rb' to test the working of Trans::Api::Torrent.
 
 ```bash
 # run unit test session
-$ ruby -I test test/unit/trans_torrent_object.rb
+$ CONFIG="{\"host\":\"localhost\",\"port\":1234,\"user\":\"youruser\",\"pass\":\"yourpass\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_torrent_object.rb
 ```
 
 NOTE: test `test_torrent_rapid_delete` will fail because of an issue with rapid calling.
@@ -446,9 +446,9 @@ $ vagrant up testing
 *Configure the CONFIG variable to target the VM*
 
 ```bash
-$ CONFIG="{\"host\":\"10.0.0.2\",\"port\":19091,\"user\":\"admin\",\"pass\":\"adm1n\",\"path\":\"/transmission/rpc\"}"
-# run unit tests (section above)
-$ ruby -I test test/unit/trans_connect.rb
+# use this CONFIG string to connect to the testing instance
+$ CONFIG="{\"host\":\"localhost\",\"port\":19091,\"user\":\"admin\",\"pass\":\"adm1n\",\"path\":\"/transmission/rpc\"}"
+# run tests like described above
 ```
 
 *NOTE: don't forget to HALT (and DESTROY) the VM when done!*

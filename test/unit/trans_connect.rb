@@ -19,21 +19,21 @@ class TransConnect < Test::Unit::TestCase
 
     Trans::Api::Client.config = @CONFIG
 
-    # # add a testing torrent
-    # file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-1.iso.torrent")
-    # @torrent = Trans::Api::Torrent.add_file file, paused: true
-    # sleep 1
+    # add a testing torrent
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-1.iso.torrent")
+    @torrent = add_torrent_base64(file)
+    sleep 1
   end
 
   def teardown
     Trans::Api::Client.config = @CONFIG
 
     # # remove the testing torrent
-    # id = @torrent.id
-    # @torrent.delete! delete_local_data: true
-    # self.signal_wait_until(lambda{|t| t.nil?}) do
-    #   Trans::Api::Torrent.find id
-    # end
+    id = @torrent.id
+    @torrent.delete! delete_local_data: true
+    self.signal_wait_until(lambda{|t| t.nil?}) do
+      Trans::Api::Torrent.find id
+    end
   end
 
 
@@ -235,35 +235,9 @@ class TransConnect < Test::Unit::TestCase
         stopped_torrents = tc.torrent_get([:id, :name, :status], start_ids)
       end
       assert stopped_torrents.reject{|t| Trans::Api::Torrent::STATUS[t[:status]] == :stopped }.size == 0, "still some running torrents"
-
-
     else
       assert false, "no torrent files found!"
     end
-  end
-
-  def test_torrent_add_remove_single
-    tc = Trans::Api::Connect.new @CONFIG
-
-    # add test file
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
-    torrent = tc.torrent_add filename: file, paused: true
-
-    # get submitted torrent
-    torrent_get = tc.torrent_get([:id, :name, :status], [torrent[:id]]).first
-    assert torrent_get[:id] == torrent[:id]
-
-    # remove torrent and cleanup
-    torrent_remove = tc.torrent_remove({delete_local_data: true}, [torrent[:id]])
-
-
-    torrent_get = nil
-    self.signal_wait_until(lambda{|t| t.nil?}) do
-      torrent_get = tc.torrent_get([:id, :name, :status], [torrent[:id]]).first
-    end
-
-    assert torrent_get.nil?
-
   end
 
 
@@ -275,9 +249,7 @@ class TransConnect < Test::Unit::TestCase
     end
 
     #TODO: add test here!
-
   end
-
 
   def test_torrent_start_now
     tc = Trans::Api::Connect.new @CONFIG
@@ -289,18 +261,6 @@ class TransConnect < Test::Unit::TestCase
     torrent = tc.torrent_get([:id, :name, :status]).first
     # check started status
     assert Trans::Api::Torrent::STATUS[torrent[:status]] != :stopped
-  end
-
-  def test_torrent_verify
-    tc = Trans::Api::Connect.new @CONFIG
-    torrents = tc.torrent_get([:id, :name, :status])
-
-    torrents.each do |torrent|
-      tc.torrent_verify([torrent[:id]])
-      t = tc.torrent_get([:recheckProgress], [torrent[:id]]).first
-      assert t[:recheckProgress] > 0
-    end
-
   end
 
   def test_torrent_reannounce
@@ -339,115 +299,17 @@ class TransConnect < Test::Unit::TestCase
 
 
 
+  protected
 
-  # MISC
-
-  def test_blocklist_update
-    tc = Trans::Api::Connect.new @CONFIG
-    response = tc.blocklist_update
-    assert response.include? :blocklist_size
-    assert response[:blocklist_size].class == Fixnum
-  end
-
-  def test_port_test
-    tc = Trans::Api::Connect.new @CONFIG
-    response = tc.port_test
-    assert response.include? :port_is_open
-    assert response[:port_is_open].class == FalseClass || response[:port_is_open].class == TrueClass
-  end
-
-  def test_timeout
-    # tc = Trans::Api::Connect.new @CONFIG
-
-  end
-
-
-  # QUEUE
-
-  def test_queue_movement
-    tc = Trans::Api::Connect.new @CONFIG
-
-    torrents = []
-
-    # add a bunch of files
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
-    torrents << tc.torrent_add(filename: file, paused: true)
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-3.iso.torrent")
-    torrents << tc.torrent_add(filename: file, paused: true)
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-4.iso.torrent")
-    torrents << tc.torrent_add(filename: file, paused: true)
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
-    torrents << tc.torrent_add(filename: file, paused: true)
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-6.iso.torrent")
-    torrents << tc.torrent_add(filename: file, paused: true)
-    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-7.iso.torrent")
-    torrents << tc.torrent_add(filename: file, paused: true)
-
-    # move bottom
-    tc.queue_move_bottom [torrents.first[:id]]
-
-
-    # collect all torrents
-    all = tc.torrent_get([:id, :name, :status, :queuePosition])
-
-    # isolate first and last
-    torrent_first = all.first
-    torrent_last = all.last
-
-    # reverse queue order
-    tc.queue_move_bottom [torrent_first[:id]]
-    tc.queue_move_top [torrent_last[:id]]
-
-    # check if order is reversed
-    assert tc.torrent_get([:id, :name, :status, :queuePosition], [torrent_first[:id]]).first[:queuePosition] == all.size - 1
-    assert tc.torrent_get([:id, :name, :status, :queuePosition], [torrent_last[:id]]).first[:queuePosition] == 0
-
-
-
-    # get reference torrent (queueposition == 0)
-    ref = nil
-    all = tc.torrent_get([:id, :name, :status, :queuePosition])
-    all.each do |t|
-      if t[:queuePosition] == 0
-        ref = t
-        break
-      end
+  def add_torrent_base64(file)
+    filename = File.basename(file, ".*")
+    metainfo = ""
+    File.open(file, 'r') do |file|
+      tmp = file.read
+      metainfo += Base64.encode64 tmp
     end
-
-    # move down the queue list
-    i = 0
-    while i < all.size
-      all = tc.torrent_get([:id, :name, :status, :queuePosition])
-      all.each do |t|
-       if t[:queuePosition] == i
-         assert ref[:name] == t[:name]
-         tc.queue_move_down [t[:id]]
-        end
-      end
-      i += 1
-    end
-
-    # move up the queue list (use the last reference)
-    while i >= 0
-      all = tc.torrent_get([:id, :name, :status, :queuePosition])
-      all.each do |t|
-       if t[:queuePosition] == i
-         assert ref[:name] == t[:name]
-         tc.queue_move_up [t[:id]]
-        end
-      end
-      i -= 1
-    end
-
-
-    # cleanup added torrents
-    torrents.each do |torrent|
-      tc.torrent_remove [torrent[:id]]
-      sleep 0.5 # don't crash the rpc daemon!
-    end
+    Trans::Api::Torrent.add_metainfo(metainfo, filename, paused: true)
   end
-
-
 
 
   # UTILS, probe block as long as pr callback returns false

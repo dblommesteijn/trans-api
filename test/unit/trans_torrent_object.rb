@@ -20,21 +20,21 @@ class TransTorrentObject < Test::Unit::TestCase
     @CONFIG = JSON.parse(ENV["CONFIG"], symbolize_names: true) if ENV.include? "CONFIG"
 
     Trans::Api::Client.config = @CONFIG
-    # Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
+    Trans::Api::Torrent.default_fields = [ :id, :status, :name ]
 
     # # add a testing torrent
-    # file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-1.iso.torrent")
-    # @torrent = Trans::Api::Torrent.add_file file, paused: true
-    # sleep 1
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-1.iso.torrent")
+    @torrent = add_torrent_base64 file
+    sleep 1
   end
 
   def teardown
     # remove the testing torrent
-    # id = @torrent.id
-    # @torrent.delete! delete_local_data: true
-    # self.signal_wait_until(lambda{|t| t.nil?}) do
-    #   Trans::Api::Torrent.find id
-    # end
+    id = @torrent.id
+    @torrent.delete! delete_local_data: true
+    self.signal_wait_until(lambda{|t| t.nil?}) do
+      Trans::Api::Torrent.find id
+    end
   end
 
 
@@ -184,7 +184,7 @@ class TransTorrentObject < Test::Unit::TestCase
   def test_torrent_add_remove_single
     # add file
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
-    torrent = Trans::Api::Torrent.add_file file, paused: true
+    torrent = add_torrent_base64 file
     assert torrent.id
 
     # remove the testing torrent
@@ -198,8 +198,7 @@ class TransTorrentObject < Test::Unit::TestCase
 
   def test_torrent_add_remove_multiple
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
-    torrent = Trans::Api::Torrent.add_file file, paused: true
-
+    torrent = add_torrent_base64 file
     torrents = Trans::Api::Torrent.all
 
     assert torrents.size > 0, "no loaded torrents found"
@@ -213,17 +212,17 @@ class TransTorrentObject < Test::Unit::TestCase
     50.times.each do |t|
       ts = []
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-3.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-4.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-6.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-7.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       # verify push
       torrents = Trans::Api::Torrent.all
       assert torrents.size == 7, "not 7 torrents found"
@@ -252,17 +251,17 @@ class TransTorrentObject < Test::Unit::TestCase
     50.times.each do |t|
       ts = []
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-3.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-4.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-6.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-7.iso.torrent")
-      ts << Trans::Api::Torrent.add_file(file, paused: true)
+      ts << add_torrent_base64(file)
       # verify push
       torrents = Trans::Api::Torrent.all
       assert torrents.size == 7, "not 7 torrents found"
@@ -337,7 +336,7 @@ class TransTorrentObject < Test::Unit::TestCase
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
     # hammer duplicate torrent
     torrent = nil
-    10.times { |t| torrent = Trans::Api::Torrent.add_file(file, paused: true) }
+    10.times { |t| torrent = add_torrent_base64(file) }
     assert Trans::Api::Torrent.all.size == 2
     torrent.delete!
   end
@@ -349,17 +348,17 @@ class TransTorrentObject < Test::Unit::TestCase
     # add test torrents
     torrents = []
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
-    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+    torrents << add_torrent_base64(file)
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-3.iso.torrent")
-    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+    torrents << add_torrent_base64(file)
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-4.iso.torrent")
-    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+    torrents << add_torrent_base64(file)
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
-    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+    torrents << add_torrent_base64(file)
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-6.iso.torrent")
-    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+    torrents << add_torrent_base64(file)
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-7.iso.torrent")
-    torrents << Trans::Api::Torrent.add_file(file, paused: true)
+    torrents << add_torrent_base64(file)
 
     # collect first and last
     all = Trans::Api::Torrent.all
@@ -430,17 +429,13 @@ class TransTorrentObject < Test::Unit::TestCase
 
 
   def test_torrent_add_by_base
+    # puts @CONFIG.inspect
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
-    filename = File.basename(file, ".*")
-    metainfo = ""
-    File.open(file, 'r') do |file|
-      tmp = file.read
-      metainfo += Base64.encode64 tmp
-    end
-    torrent1 = Trans::Api::Torrent.add_metainfo(metainfo, filename, paused: true)
+    torrent1 = add_torrent_base64(file)
     assert torrent1.name == "debian-6.0.6-amd64-CD-5.iso"
     # test add duplicate (returns torrent1 reloaded)
-    torrent2 = Trans::Api::Torrent.add_metainfo(metainfo, filename, paused: true)
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
+    torrent2 = add_torrent_base64(file)
     assert torrent1.id == torrent2.id
     assert torrent1.name == torrent2.name
     torrent1.delete!
@@ -455,6 +450,17 @@ class TransTorrentObject < Test::Unit::TestCase
 
 
   protected
+
+
+  def add_torrent_base64(file)
+    filename = File.basename(file, ".*")
+    metainfo = ""
+    File.open(file, 'r') do |file|
+      tmp = file.read
+      metainfo += Base64.encode64 tmp
+    end
+    Trans::Api::Torrent.add_metainfo(metainfo, filename, paused: true)
+  end
 
 
   # UTILS, probe block as long as pr callback returns false

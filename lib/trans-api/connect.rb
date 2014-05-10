@@ -152,9 +152,7 @@ module Trans
       def torrent_add(arguments={})
         data = METHODS[:torrent_add]
         data[:arguments] = argument_name_to_api arguments
-        puts data.inspect
         ret = self.do(:post, data)
-        puts ret.inspect
         # puts JSON.parse(ret[:response].body).inspect
         torrents = JSON.parse ret[:response].body.gsub("-","_"), {symbolize_names: true}
         raise torrents[:result] unless valid? torrents, data[:tag]
