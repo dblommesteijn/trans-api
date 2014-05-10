@@ -425,7 +425,7 @@ NOTE: test `test_torrent_rapid_delete` will fail because of an issue with rapid 
 
 Besides running your existing client with Transmission you can test on an isolated virtual machine via Vagrant.
 
-* Download Dependencies *
+**Download Dependencies**
 
 Download and follow the installation instructions.
 
@@ -443,7 +443,7 @@ $ cd /location/of/trans-api
 $ vagrant up testing
 ```
 
-*Configure the CONFIG variable to target the VM*
+**Configure the CONFIG variable to target the VM**
 
 ```bash
 # use this CONFIG string to connect to the testing instance
