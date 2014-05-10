@@ -18,7 +18,7 @@ sudo mkdir -p /home/vagrant/downloads/
 sudo chmod -R 777 /home/vagrant/downloads/
 # register daemon
 sudo update-rc.d transmission-daemon defaults
-# push config
+# push config and restart
 sudo service transmission-daemon stop
 sudo cp /vagrant/.vagrant/bootstrap/settings.json /var/lib/transmission-daemon/info/settings.json
 sudo chown debian-transmission /var/lib/transmission-daemon/info/settings.json
@@ -29,7 +29,6 @@ echo " VM is up and running!"
 echo " ---------------------"
 echo " Running service at: http://localhost:19091 (tunneled)"
 echo " - You can now start testing!"
-echo " $ CONFIG=\"{\\\"host\\\":\\\"localhost\\\",\\\"port\\\":\\\"19091\\\",\\\"user\\\":\\\"admin\\\",\\\"pass\\\":\\\"adm1n\\\",\\\"path\\\":\\\"/transmission/rpc\\\"}\""
-echo " $ ruby -I test test/unit/trans_connect.rb"
+echo " $ CONFIG=\"{\\\"host\\\":\\\"localhost\\\",\\\"port\\\":\\\"19091\\\",\\\"user\\\":\\\"admin\\\",\\\"pass\\\":\\\"adm1n\\\",\\\"path\\\":\\\"/transmission/rpc\\\"}\" ruby -I test test/unit/trans_connect.rb"
 echo "======================================================="
 
