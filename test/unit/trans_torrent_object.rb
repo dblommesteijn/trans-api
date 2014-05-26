@@ -195,6 +195,24 @@ class TransTorrentObject < Test::Unit::TestCase
     end
   end
 
+  def test_torrent_add_links
+    torrents_size = Trans::Api::Torrent.all.size
+    # add torrent
+    file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
+    torrent = add_torrent_base64 file
+    # get magnet link
+    magnet_link = torrent.magnetLink.dup
+    torrent.waitfor(lambda{|t| t.last_error[:error] == "reset_exception"}).delete!(delete_local_data: true)
+    # check if it is removed
+    torrents = Trans::Api::Torrent.all
+    assert torrents.size == torrents_size, "torrent not removed"
+    # add via magnet
+    torrent = Trans::Api::Torrent.add_magnet(magnet_link, paused: true)
+    torrents = Trans::Api::Torrent.all
+    assert torrents.size == (torrents_size + 1), "torrent not added"
+    torrent.waitfor(lambda{|t| t.last_error[:error] == "reset_exception"}).delete!(delete_local_data: true)
+  end
+
 
   def test_torrent_add_remove_multiple
     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")

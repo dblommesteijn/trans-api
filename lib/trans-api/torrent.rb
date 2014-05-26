@@ -223,6 +223,21 @@ module Trans
           Torrent.new torrent: torrent
         end
 
+        def add_magnet(uri, options={})
+          #TODO: urlencode &amp; dn= in name not checked
+          uri_match = uri.match(/dn=([\S]+)[&]/)
+          raise "no name found" if uri_match.size != 2
+          filename = uri_match[1]
+          # filter duplicates
+          find = Trans::Api::Torrent.find_by_field_value(:name, ::File.basename(filename, ".*"))
+          return find unless find.nil?
+          client = Client.new
+          options[:filename] = uri
+          torrent = client.connect.torrent_add options
+          torrent = client.connect.torrent_get( @@default_fields, [torrent[:id]]).first
+          Torrent.new torrent: torrent
+        end
+
         def add_metainfo(metainfo, name, options={})
           raise "name empty" if name.nil? || name == ""
           options[:metainfo] = metainfo

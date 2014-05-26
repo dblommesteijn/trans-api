@@ -48,7 +48,7 @@ This gem is (build and) tested with:
 
   * Added Session.connected?, checks if there is a valid connection to the client
   * Fixed Torrent.waitfor chained method arguements
-
+  * Added magnet support
 
 
 ### Changelog (call changes)
@@ -184,6 +184,13 @@ file_name = File.basename(file, ".*") # required >= 0.0.3/ master
 options = {paused: true}
 base64_file_contents = Base64.encode64 file.read
 Trans::Api::Torrent.add_metainfo base64_file_contents, file_name, options
+```
+
+Add magnet URI
+
+```ruby
+magnet_link = "magnet:?xt=urn:btih:42ae58b8f59bd19fe97d6ca6fd884b2e9666a4d1&dn=debian-6.0.6-amd64-CD-2.iso&tr=http%3A%2F%2Fbttracker.debian.org%3A6969%2Fannounce"
+torrent = Trans::Api::Torrent.add_magnet(magnet_link, paused: true)
 ```
 
 Get all fields
