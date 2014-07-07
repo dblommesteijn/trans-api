@@ -7,11 +7,6 @@ rvm:
   - jruby-head
 jdk:
   - oraclejdk7
-matrix:
-  exclude:
-    - rvm: 1.9.3
-      jdk: oraclejdk7
-    - rvm: 2.1.0
-      jdk: oraclejdk7
-	- rvm: ruby-head
-      jdk: oraclejdk7
+before_install:
+  - gem update --system
+  - gem --version
