@@ -3,7 +3,7 @@
 Trans::Api is an ruby implementation for Transmission RPC (bittorrent client). Based on RPC spec 13328
 https://trac.transmissionbt.com/browser/trunk/extras/rpc-spec.txt
 
-[![Build Status](https://travis-ci.org/dblommesteijn/trans-api.svg?branch=master)](https://travis-ci.org/dblommesteijn/trans-api)
+[![Build Status](https://travis-ci.org/dblommesteijn/trans-api.svg?branch=master)](https://travis-ci.org/dblommesteijn/trans-api) [![Coverage Status](https://coveralls.io/repos/dblommesteijn/trans-api/badge.png)](https://coveralls.io/r/dblommesteijn/trans-api)
 
 It required for the Transmission RPC to run the 'remote access':
 

@@ -1,7 +1,4 @@
-
-require 'rubygems'
-require 'test/unit'
-require File.expand_path(File.dirname(__FILE__) + "/../../lib/trans-api")
+require 'test_helper'
 
 # run with config options
 #CONFIG="{\"host\":\"localhost\",\"port\":9091,\"user\":\"admin\",\"pass\":\"admin\",\"path\":\"/transmission/rpc\"}" ruby -I test test/unit/trans_torrent_object.rb
@@ -225,48 +222,48 @@ class TransTorrentObject < Test::Unit::TestCase
     #TODO: add assert here!!
   end
 
-  def test_torrent_rapid_delete
-    # add a sample torrent
-    50.times.each do |t|
-      ts = []
-      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
-      ts << add_torrent_base64(file)
-      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-3.iso.torrent")
-      ts << add_torrent_base64(file)
-      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-4.iso.torrent")
-      ts << add_torrent_base64(file)
-      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
-      ts << add_torrent_base64(file)
-      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-6.iso.torrent")
-      ts << add_torrent_base64(file)
-      file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-7.iso.torrent")
-      ts << add_torrent_base64(file)
-      # verify push
-      torrents = Trans::Api::Torrent.all
-      assert torrents.size == 7, "not 7 torrents found"
-      # detect
-      ts.each do |torrent|
-        torrent.delete! delete_local_data: true
-      end
+  # def test_torrent_rapid_delete
+  #   # add a sample torrent
+  #   20.times.each do |t|
+  #     ts = []
+  #     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
+  #     ts << add_torrent_base64(file)
+  #     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-3.iso.torrent")
+  #     ts << add_torrent_base64(file)
+  #     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-4.iso.torrent")
+  #     ts << add_torrent_base64(file)
+  #     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-5.iso.torrent")
+  #     ts << add_torrent_base64(file)
+  #     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-6.iso.torrent")
+  #     ts << add_torrent_base64(file)
+  #     file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-7.iso.torrent")
+  #     ts << add_torrent_base64(file)
+  #     # verify push
+  #     torrents = Trans::Api::Torrent.all
+  #     assert torrents.size == 7, "not 7 torrents found"
+  #     # detect
+  #     ts.each do |torrent|
+  #       torrent.delete! delete_local_data: true
+  #     end
 
-      # wait for removal
-      i = 0
-      while true do
-        torrents = Trans::Api::Torrent.all
-        break if torrents.size == 1
-        sleep 0.1
-        i += 1
-        assert false, "remove not received by client (iteration: #{i}/50)" if i > 20
-      end
+  #     # wait for removal
+  #     i = 0
+  #     while true do
+  #       torrents = Trans::Api::Torrent.all
+  #       break if torrents.size == 1
+  #       sleep 0.1
+  #       i += 1
+  #       assert false, "remove not received by client (iteration: #{i}/50)" if i > 20
+  #     end
 
-      # validate removal
-      assert torrents.size == 1, "not 1 torrents found"
-    end
-  end
+  #     # validate removal
+  #     assert torrents.size == 1, "not 1 torrents found"
+  #   end
+  # end
 
   def test_torrent_rapid_safe_delete
     # add a sample torrent
-    50.times.each do |t|
+    10.times.each do |t|
       ts = []
       file = File.expand_path(File.dirname(__FILE__) + "/torrents/debian-6.0.6-amd64-CD-2.iso.torrent")
       ts << add_torrent_base64(file)

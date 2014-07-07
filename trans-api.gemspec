@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'json', "> 1.6.1"
   gem.add_development_dependency "rake"
   gem.add_development_dependency "test-unit", "> 2.0.0"
+  gem.add_development_dependency "coveralls"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
