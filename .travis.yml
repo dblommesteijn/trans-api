@@ -6,5 +6,12 @@ rvm:
   - ruby-head
   - jruby-head
 jdk:
-  - oraclejdk6
   - oraclejdk7
+matrix:
+  exclude:
+    - rvm: 1.9.3
+      jdk: oraclejdk7
+    - rvm: 2.1.0
+      jdk: oraclejdk7
+	- rvm: ruby-head
+      jdk: oraclejdk7
