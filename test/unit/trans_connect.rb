@@ -281,16 +281,15 @@ class TransConnect < Test::Unit::TestCase
 
     # load torrent
     torrents = tc.torrent_get([:id, :name, :status, :downloadDir])
-    assert torrents.size >0
+    assert torrents.size >0, "should have a torrent"
     torrents.each do |torrent|
       tc.torrent_set_location({move: true, location: file} ,[torrent[:id]])
     end
-
     # reload torrent
     torrents = tc.torrent_get([:id, :name, :status, :downloadDir])
-    assert torrents.size >0
+    assert torrents.size >0, "should have a torrent"
     torrents.each do |torrent|
-      assert torrent[:downloadDir] == file
+      assert torrent[:downloadDir] == file, "files don't match"
     end
 
   end
