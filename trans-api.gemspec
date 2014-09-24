@@ -15,9 +15,9 @@ Gem::Specification.new do |gem|
   # dependencies
   gem.add_dependency 'nokogiri', "> 1.5.0"
   gem.add_dependency 'json', "> 1.6.1"
-  gem.add_development_dependency "rake"
-  gem.add_development_dependency "test-unit", "> 2.0.0"
-  gem.add_development_dependency "coveralls"
+  gem.add_development_dependency "rake", "> 10.0.0"
+  gem.add_development_dependency "test-unit", "> 3.0.0"
+  gem.add_development_dependency "coveralls", "> 0.7.0"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
