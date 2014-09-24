@@ -52,6 +52,10 @@ This gem is (build and) tested with:
   * Fixed Torrent.waitfor chained method arguements
   * Added magnet support
 
+* Version (0.0.6)
+
+  * TBA
+
 
 ### Changelog (call changes)
 
