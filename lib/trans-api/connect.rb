@@ -59,22 +59,6 @@ module Trans
 
       # handles
 
-      def get_method(method_name, arguments=nil, &block)
-        # puts "---- get_method: #{method_name} ------"
-        # puts arguments
-        # puts block
-        data = METHODS[method_name]
-        data[:arguments] = argument_name_to_api(arguments) unless arguments.nil?
-        ret = self.do(:post, data)
-        body = ret[:response].body
-        # call block with body data (for gsub etc.)
-        body = block.call(body) if block.is_a?(Proc)
-        session = JSON.parse(body, {symbolize_names: true})
-        # puts session
-        raise session[:result] unless valid? session, data[:tag]
-        session[:arguments]
-      end
-
       def session_get
         self.get_method(:session_get) {|b| b.gsub("-","_")}
       end
@@ -196,6 +180,22 @@ module Trans
 
       # request
 
+
+      protected
+
+      def get_method(method_name, arguments=nil, &block)
+        data = METHODS[method_name]
+        data[:arguments] = argument_name_to_api(arguments) unless arguments.nil?
+        ret = self.do(:post, data)
+        body = ret[:response].body
+        # call block with body data (for gsub etc.)
+        body = block.call(body) if block.is_a?(Proc)
+        session = JSON.parse(body, {symbolize_names: true})
+        # puts session
+        raise session[:result] unless valid? session, data[:tag]
+        session[:arguments]
+      end
+
       def do(method = :get, data = nil)
         headers = @conn[:headers]
         uri = URI.parse "http://localhost/"
@@ -228,9 +228,6 @@ module Trans
         handle_request_error(ret, data)
         ret
       end
-
-
-      private
 
       def valid?(body, tag)
         body[:result] == "success" && body[:tag] == tag
