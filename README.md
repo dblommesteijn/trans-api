@@ -16,10 +16,11 @@ OSX:
 
 This gem is (build and) tested with:
 
-  * OSX: Lion, Mountain Lion, Mavericks
-  * Ruby: 1.9.3, 2.1.0
-  * Rails: 3.2.8, 3.2.9, 4.0.3
-  * Transmission 2.73 (13589) - 2.82 (14160)
+  * OSX: Lion, Mountain Lion, Mavericks, Yosemite
+  * Linux Debian, Ubuntu
+  * Ruby: 1.9.3, 2.x.x
+  * Rails: 3.2.x, 4.x.x
+  * Transmission 2.73 upto 2.84
 
 
 ### Roadmap
