@@ -22,3 +22,5 @@ pickle-email-*.html
 .coveralls.yml
 
 test/unit/torrents
+
+Gemfile.lock
