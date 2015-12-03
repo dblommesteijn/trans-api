@@ -55,7 +55,7 @@ This gem is (build and) tested with:
 
 * Version (0.0.6)
 
-  * TBA
+  * Fixed various deployment/ build issues
 
 
 ### Changelog (call changes)
