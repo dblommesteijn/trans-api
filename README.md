@@ -473,5 +473,3 @@ $ vagrant halt testing
 # power down and destroy files
 $ vagrant destroy testing
 ```
-
-
