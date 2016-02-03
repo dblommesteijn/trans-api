@@ -16,18 +16,18 @@ OSX:
 
 This gem is (build and) tested with:
 
-  * OSX: Lion, Mountain Lion, Mavericks, Yosemite
-  * Linux Debian, Ubuntu
-  * Ruby: 1.9.3, 2.x.x
-  * Rails: 3.2.x, 4.x.x
-  * Transmission 2.73 upto 2.84
+  * OSX: Lion, Mountain Lion, Mavericks, Yosemite, El Capitan
+  * Linux: Debian, Ubuntu
+  * Ruby: 1.9.3, 2.x
+  * Rails: 3.2.x, 4.x
+  * Transmission > 2.73
 
 
 ### Roadmap
 
 * Version (0.0.1)
 
-  * Initial project import.
+  * Initial project
 
 * Version (0.0.2)
 
@@ -67,11 +67,11 @@ This gem is (build and) tested with:
 
 ### Known Issues
 
-The Transmission RPC call 'torrent-remove' (implemented as torrent.delete! and Torrent::delete_all!) will crash the daemon! This is NOT a known Transmission issue.
+~~The Transmission RPC call 'torrent-remove' (implemented as torrent.delete! and Torrent::delete_all!) will crash the daemon! This is NOT a known Transmission issue.~~
 
 Due to a Transmission bug (https://trac.transmissionbt.com/ticket/5614) duplicate torrents are accepted by the RPC call. The GUI will eventually crash the daemon, when interacting with these duplicate files (or instances). Torrent.add_file/ add_metainfo queries for duplicates to omit this bug.
 
-On rapid RPC calls the client will ignore the request, and respond with successfull. For example rapid Torrent.delete! will respond with status successfull, but it remains active. You can use a blocked call via waitfor (chained) to make sure the action was completed.
+~~On rapid RPC calls the client will ignore the request, and respond with successfull. For example rapid Torrent.delete! will respond with status successfull, but it remains active. You can use a blocked call via waitfor (chained) to make sure the action was completed.~~
 
 
 ## Installation

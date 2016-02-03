@@ -20,7 +20,7 @@ sudo chmod -R 777 /home/vagrant/downloads/
 sudo update-rc.d transmission-daemon defaults
 # push config and restart
 sudo service transmission-daemon stop
-sudo cp /vagrant/.vagrant/bootstrap/settings.json /var/lib/transmission-daemon/info/settings.json
+sudo cp /vagrant/vagrant/transmission-settings.json /var/lib/transmission-daemon/info/settings.json
 sudo chown debian-transmission /var/lib/transmission-daemon/info/settings.json
 sudo service transmission-daemon start
 
