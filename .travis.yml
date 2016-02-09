@@ -12,3 +12,4 @@ before_install:
   - travis_retry gem update --system
   - gem --version
   - gem update bundler
+  - sudo apt-get install build-essential
