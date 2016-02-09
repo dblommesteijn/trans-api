@@ -19,8 +19,6 @@ pickle-email-*.html
 /pkg/*
 .vagrant/machines/*
 
-.coveralls.yml
-
 test/unit/torrents
 
 Gemfile.lock
