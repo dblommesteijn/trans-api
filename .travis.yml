@@ -11,3 +11,4 @@ bundler_args: --retry 3
 before_install:
   - travis_retry gem update --system
   - gem --version
+  - gem update bundler

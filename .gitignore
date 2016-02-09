@@ -24,3 +24,4 @@ pickle-email-*.html
 test/unit/torrents
 
 Gemfile.lock
+.ruby-version
