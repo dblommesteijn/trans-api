@@ -1,3 +1,4 @@
+sudo: false
 language: ruby
 rvm:
   - 1.9.3
@@ -12,6 +13,3 @@ before_install:
   - travis_retry gem update --system
   - gem --version
   - gem update bundler
-  - sudo apt-get update
-  - sudo apt-get install build-essential bison openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libxml2-dev autoconf libc6-dev ncurses-dev automake libtool 
-
