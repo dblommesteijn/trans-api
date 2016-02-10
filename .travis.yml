@@ -1,4 +1,4 @@
-sudo: false
+# sudo: false
 language: ruby
 rvm:
   - 1.9.3
@@ -13,3 +13,4 @@ before_install:
   - travis_retry gem update --system
   - gem --version
   - gem update bundler
+  - sudo apt-get install liblzma-dev zlib1g-dev
