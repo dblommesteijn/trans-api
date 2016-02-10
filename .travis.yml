@@ -13,4 +13,4 @@ before_install:
   - travis_retry gem update --system
   - gem --version
   - gem update bundler
-  - sudo apt-get install liblzma-dev zlib1g-dev
+  - sudo apt-get install liblzma-dev zlib1g-dev libgmp3-dev
