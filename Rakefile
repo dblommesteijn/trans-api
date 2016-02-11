@@ -8,8 +8,4 @@ Rake::TestTask.new do |t|
   t.verbose = true
 end
 
-require 'coveralls/rake/task'
-Coveralls::RakeTask.new
-
-task test_with_coveralls: ['test', 'coveralls:push']
 task default: [:build, :install]
